@@ -16,9 +16,6 @@ import java.util.zip.ZipOutputStream;
  */
 public final class FileHelper {
 
-    private FileHelper() {
-    }
-
     public static List<File> readFolder(String folderName) {
         File folder = new File(folderName);
         FileHelper fr = new FileHelper();
@@ -69,22 +66,28 @@ public final class FileHelper {
         try {
             File afile = new File(from);
             if (!afile.renameTo(new File(to))) {
-                System.out.println("Het verplaatsen van het bestand "+from+" naar "+to+" is fout gegaan!");
+                System.out.println("Het verplaatsen van het bestand " + from + " naar " + to + " is fout gegaan!");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static boolean folderExists (String folderName) {
+
+    public static boolean folderExists(String folderName) {
         if (Files.isDirectory(Paths.get(folderName))) {
             return true;
         } else {
             return false;
         }
     }
+
     public static String getCurrentFolderName(String folderName) {
-        return folderName.substring(folderName.lastIndexOf('\\')+1);
+        return folderName.substring(folderName.lastIndexOf('\\') + 1);
+    }
+
+    public static String getPeviousFolderName(String folderName) {
+        return folderName.substring(0, folderName.lastIndexOf('\\'));
     }
 
     public static void removeFilePrefixes(String folderName) {
@@ -92,7 +95,7 @@ public final class FileHelper {
         String filename = "";
         String newFilename = "";
         String versie = getCurrentFolderName(folderName);
-        System.out.println("Verwijderen evt versie prefix van de bestanden in de oplevermap "+folderName);
+        System.out.println("Verwijderen evt versie prefix van de bestanden in de oplevermap " + folderName);
         for (File file : fl) {
             // trim evt al aanwezige versienummer
             int positieVersieNummer = file.getName().indexOf(versie);
@@ -103,8 +106,8 @@ public final class FileHelper {
                 if (positieSeparator >= 0) {
                     newFilename = filename.substring(positieSeparator + 1);
                     try {
-                        File afile = new File(folderName+"\\"+filename);
-                        if (!afile.renameTo(new File(folderName+"\\"+newFilename))) {
+                        File afile = new File(folderName + "\\" + filename);
+                        if (!afile.renameTo(new File(folderName + "\\" + newFilename))) {
                             System.out.println("Het hernoemen van het bestand " + filename + " naar " + newFilename + " is fout gegaan!");
                         }
 
@@ -142,7 +145,7 @@ public final class FileHelper {
                 file.createNewFile();
                 fileBestaatAl = false;
             }
-            if (fileBestaatAl && (file.getName().contains("releasenotes")||file.getName().contains("GewijzigdeObjecten"))) {
+            if (fileBestaatAl && (file.getName().contains("releasenotes") || file.getName().contains("GewijzigdeObjecten"))) {
                 appendFile = true;
                 System.out.println("Uitbreiden: " + filename);
             } else {
@@ -176,65 +179,93 @@ public final class FileHelper {
             e.printStackTrace();
         }
     }
-    public static void zip(String inputFolder, String targetZippedFolder) throws IOException {
 
-        FileOutputStream fileOutputStream = null;
+    public static void zip(String teZippenFolder) {
+        try {
+            System.out.println("te zippen foldernaam is " + teZippenFolder + " naar " + getPeviousFolderName(teZippenFolder));
 
-        fileOutputStream = new FileOutputStream(targetZippedFolder);
-        ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream);
-
-        File inputFile = new File(inputFolder);
-
-        if (inputFile.isFile())
-            zipFile(inputFile, "", zipOutputStream);
-        else if (inputFile.isDirectory())
-            zipFolder(zipOutputStream, inputFile, "");
-
-        zipOutputStream.close();
-    }
-
-
-    public static void zipFolder(ZipOutputStream zipOutputStream, File inputFolder, String parentName) throws IOException {
-
-        String myname = parentName + inputFolder.getName() + "\\";
-
-        ZipEntry folderZipEntry = new ZipEntry(myname);
-        zipOutputStream.putNextEntry(folderZipEntry);
-
-        File[] contents = inputFolder.listFiles();
-
-        for (File f : contents) {
-            if (f.isFile())
-                zipFile(f, myname, zipOutputStream);
-            else if (f.isDirectory())
-                zipFolder(zipOutputStream, f, myname);
-        }
-        zipOutputStream.closeEntry();
-    }
-
-
-    public static void zipFile(File inputFile, String parentName, ZipOutputStream zipOutputStream) throws IOException {
-
-
-        // A ZipEntry represents a file entry in the zip archive
-        // We name the ZipEntry after the original file's name
-        ZipEntry zipEntry = new ZipEntry(parentName);
-        zipOutputStream.putNextEntry(zipEntry);
-
-        FileInputStream fileInputStream = new FileInputStream(inputFile);
-        byte[] buf = new byte[1024];
-        int bytesRead;
-
-        // Read the input file by chucks of 1024 bytes
-        // and write the read bytes to the zip stream
-        while ((bytesRead = fileInputStream.read(buf)) > 0) {
-            zipOutputStream.write(buf, 0, bytesRead);
+            zip(teZippenFolder);
+        } catch (Exception se) {
+            System.out.println("Wegens fouten is de oplevering niet gezipt: " + se.getStackTrace());
         }
 
-        // close ZipEntry to store the stream to the file
-        zipOutputStream.closeEntry();
+    }
 
-        System.out.println("Regular file :" + parentName + " is zipped to archive :");
+    public static void zipFolder(String teZippenFolder) throws IOException
+
+    {
+        File directoryToZip = new File(teZippenFolder);
+
+        List<File> fileList = new ArrayList<File>();
+        System.out.println("---Getting references to all files in: " + directoryToZip.getCanonicalPath());
+        getAllFiles(directoryToZip, fileList);
+        System.out.println("---Creating zip file");
+        writeZipFile(directoryToZip, fileList);
+        System.out.println("---Done");
+    }
+
+    public static void getAllFiles(File dir, List<File> fileList) {
+        try {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                fileList.add(file);
+                if (file.isDirectory()) {
+                    System.out.println("directory:" + file.getCanonicalPath());
+                    getAllFiles(file, fileList);
+                } else {
+                    System.out.println("     file:" + file.getCanonicalPath());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeZipFile(File directoryToZip, List<File> fileList) {
+
+        try {
+            System.out.println("schrijf bestand naar " + getPeviousFolderName(directoryToZip.getName()) + directoryToZip.getName() + ".zip");
+            FileOutputStream fos = new FileOutputStream(getPeviousFolderName(directoryToZip.getName()) + directoryToZip.getName() + ".zip");
+            ZipOutputStream zos = new ZipOutputStream(fos);
+
+            for (File file : fileList) {
+                if (!file.isDirectory()) { // we only zip files, not directories
+                    addToZip(directoryToZip, file, zos);
+                }
+            }
+
+            zos.close();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addToZip(File directoryToZip, File file, ZipOutputStream zos) throws FileNotFoundException,
+            IOException {
+
+        FileInputStream fis = new FileInputStream(file);
+
+        // we want the zipEntry's path to be a relative path that is relative
+        // to the directory being zipped, so chop off the rest of the path
+        String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
+                file.getCanonicalPath().length());
+        System.out.println("Writing '" + zipFilePath + "' to zip file");
+        ZipEntry zipEntry = new ZipEntry(zipFilePath);
+        zos.putNextEntry(zipEntry);
+
+        byte[] bytes = new byte[1024];
+        int length;
+        while ((length = fis.read(bytes)) >= 0) {
+            zos.write(bytes, 0, length);
+        }
+
+        zos.closeEntry();
+        fis.close();
     }
 
 }
+
+

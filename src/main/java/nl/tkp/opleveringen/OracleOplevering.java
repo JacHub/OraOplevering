@@ -93,7 +93,7 @@ public class OracleOplevering {
         ArrayList<String> regels = new ArrayList<String>();
 
         if (!file.exists()) {
-            regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE" ));
+            regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
             regels.add("set serveroutput on size 1000000");
             regels.add("");
             regels.add("spool " + this.versie + "_setup.lst");

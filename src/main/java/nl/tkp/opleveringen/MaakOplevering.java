@@ -1,4 +1,5 @@
 package nl.tkp.opleveringen;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -8,8 +9,9 @@ import java.util.List;
  */
 public class MaakOplevering {
     public static void main(String[] args) throws WrongVersionNameException, ConfigFileNotExistsException, ConfigFileNotValidException {
+
         if (args.length != 2) {
-            System.out.println("MaakOplevering "+args.length);
+            System.out.println("MaakOplevering " + args.length);
             System.out.println("FOUT!!");
             System.out.println("");
             System.out.println("Om een oplevering aan te maken zijn er twee argumenten nodig!");
@@ -25,7 +27,8 @@ public class MaakOplevering {
             if (!args[0].isEmpty()) {
                 folderName = args[1];
             }
-            if (FileHelper.folderExists(folderName) && FileHelper.getCurrentFolderName(folderName).matches("\\S{3,7}_\\d.\\d\\d.\\d\\d\\d") ) {
+
+            if (FileHelper.folderExists(folderName) && FileHelper.getCurrentFolderName(folderName).matches("\\S{3,7}_\\d.\\d\\d.\\d\\d\\d")) {
 
                 FileHelper.removeFilePrefixes(folderName);
 
@@ -64,12 +67,7 @@ public class MaakOplevering {
                     opl.createReleasenotes();
                     opl.createConfig();
                     opl.createActionnotes();
-                    try {
-                        System.out.println("te zippen foldernaam is "+ folderName);
-                        FileHelper.zip(folderName, "G:\\werk\\jacob.zip");
-                    }   catch (Exception se) {
-                        System.out.println("Wegens fouten is de oplevering niet gezipt: "+se.getStackTrace());
-                    }
+                    //                    FileHelper.zip(folderName);
 
                     System.out.println("De oplevering is aangemaakt!");
                 }

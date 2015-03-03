@@ -15,7 +15,7 @@ public class TestJerseyClientJiraSearchAssigneeCall {
         try {
             SearchAssigneeResult searchAssigneeResult = null;
             do {
-                searchAssigneeResult = new JerseyClientJiraSearchAssigneeCall().jerseyClientCall("eekhout.l", searchAssigneeResult);
+                searchAssigneeResult = new JerseyClientJiraSearchAssigneeCall().jerseyClientCall("huizenga.j", searchAssigneeResult);
                 for (Issue issue : searchAssigneeResult.getIssues()) {
                     System.out.println(issue);
                 }
