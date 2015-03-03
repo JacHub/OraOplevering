@@ -4,9 +4,12 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import nl.tkp.opleveringen.representation.search.labels.Issue;
 import nl.tkp.opleveringen.representation.search.labels.SearchLabelsResult;
 import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by eekhout.l on 03-03-2015.
@@ -25,7 +28,7 @@ public class JerseyClientJiraSearchLabelsCall {
         return jerseyClientConfig;
     }
 
-    public SearchLabelsResult jerseyClientCall(String search, SearchLabelsResult vorigeLabelsResult) {
+    private SearchLabelsResult jerseyClientCall(String search, SearchLabelsResult vorigeLabelsResult) {
         String qString = "";
 
         if (vorigeLabelsResult!=null) {
@@ -44,5 +47,19 @@ public class JerseyClientJiraSearchLabelsCall {
             return clientResponse.getEntity(SearchLabelsResult.class);
         } else
             throw new RuntimeException(clientResponse.toString());
+    }
+
+    public Map<String,String> haalJiraStoriesVanLabels(String label) {
+        Map<String,String> stringMap = new HashMap<String,String>();
+        SearchLabelsResult searchLabelsResult = null;
+
+        do {
+            searchLabelsResult = new JerseyClientJiraSearchLabelsCall().jerseyClientCall(label, searchLabelsResult);
+            for (Issue issue : searchLabelsResult.getIssues()) {
+                stringMap.put(issue.getKey(), issue.getFields().getSummary());
+            }
+        } while (searchLabelsResult.getStartAt()+searchLabelsResult.getMaxResults()<=searchLabelsResult.getTotal());
+
+        return stringMap;
     }
 }

@@ -1,5 +1,7 @@
 package nl.tkp.opleveringen;
 
+import nl.tkp.opleveringen.clientCalls.JerseyClientJiraSearchLabelsCall;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -244,6 +246,24 @@ public class OracleOplevering {
             Locale currentLocale = new Locale("nl");
             formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
             regels.add("Datum       : " + formatter.format(new Date()));
+
+            // 03-03-2015 Lveekhout:
+            try {
+                Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels(this.versie);
+
+                if (stringMap.size()>0) {
+                    regels.add("");
+                    regels.add("JIRA meldingen:");
+
+                    for (Map.Entry<String,String> entry : stringMap.entrySet()) {
+                        regels.add("- [" + entry.getKey() + "] " + entry.getValue());
+                    }
+
+                    regels.add("");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             regels.add("Omschrijving: ");
             regels.add("");
