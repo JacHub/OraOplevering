@@ -7,18 +7,42 @@
     <groupId>OraOplevering</groupId>
     <artifactId>OraOplevering</artifactId>
     <version>1.0-SNAPSHOT</version>
-<dependencies>
-    <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.3.1</version>
-    </dependency>
-    <dependency>
-        <groupId>com.cedarsoftware</groupId>
-        <artifactId>json-io</artifactId>
-        <version>2.9.3</version>
-    </dependency>
 
-</dependencies>
+    <properties>
+        <gson.version>2.3.1</gson.version>
+        <json-io.version>2.9.3</json-io.version>
+        <jersey-client.version>1.13</jersey-client.version>
+        <jackson-annotations.version>2.4.1</jackson-annotations.version>
+        <jackson-jaxrs-json-provider.version>2.4.1</jackson-jaxrs-json-provider.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cedarsoftware</groupId>
+            <artifactId>json-io</artifactId>
+            <version>${json-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson-jaxrs-json-provider.version}</version>
+        </dependency>
+
+    </dependencies>
 
 </project>

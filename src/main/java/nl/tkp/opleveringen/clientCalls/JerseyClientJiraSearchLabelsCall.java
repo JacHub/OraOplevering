@@ -1,0 +1,48 @@
+package nl.tkp.opleveringen.clientCalls;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import nl.tkp.opleveringen.representation.search.labels.SearchLabelsResult;
+import javax.ws.rs.core.MediaType;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
+/**
+ * Created by eekhout.l on 03-03-2015.
+ * class JerseyClientJiraSearchLabelCall
+ */
+
+public class JerseyClientJiraSearchLabelsCall {
+
+    private ClientConfig jerseyClientConfig = null;
+
+    protected synchronized ClientConfig getClientConfig() {
+        if (jerseyClientConfig == null) {
+            jerseyClientConfig = new DefaultClientConfig();
+            jerseyClientConfig.getClasses().add(JacksonJsonProvider.class);
+        }
+        return jerseyClientConfig;
+    }
+
+    public SearchLabelsResult jerseyClientCall(String search, SearchLabelsResult vorigeLabelsResult) {
+        String qString = "";
+
+        if (vorigeLabelsResult!=null) {
+            qString += "&startAt=" + vorigeLabelsResult.getStartAt()+vorigeLabelsResult.getMaxResults();
+            qString += "&maxResult=" + vorigeLabelsResult.getMaxResults();
+        }
+
+        ClientResponse clientResponse = Client.create(getClientConfig())
+                .resource("http://jira/rest/api/latest/search?jql=labels=" + search + qString)
+                .header("Authorization", "Basic c2NydW1zY2hlcm06V2ludGVyMjAxNWE=")
+                .header("Connection", "Close")
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get(ClientResponse.class);
+
+        if (clientResponse.getStatus()==200) {
+            return clientResponse.getEntity(SearchLabelsResult.class);
+        } else
+            throw new RuntimeException(clientResponse.toString());
+    }
+}
