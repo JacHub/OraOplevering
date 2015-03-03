@@ -89,7 +89,7 @@ public class OracleObject {
     public String getObjectName(String versie) {
         String objectName = this.fileName;
         int positiePunt = objectName.indexOf('.');
-       // trim het filetype
+        // trim het filetype
         if (positiePunt >= 0) {
             objectName = objectName.substring(0, positiePunt);
         }
