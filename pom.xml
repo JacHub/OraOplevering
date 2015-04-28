@@ -45,7 +45,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>nl/tkp/opleveringen/OracleOplevering</mainClass>
+                                    <mainClass>nl/tkp/opleveringen/MaakOplevering</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

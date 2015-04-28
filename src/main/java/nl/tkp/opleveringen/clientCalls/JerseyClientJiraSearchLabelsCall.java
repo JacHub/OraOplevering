@@ -1,13 +1,16 @@
 package nl.tkp.opleveringen.clientCalls;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import nl.tkp.opleveringen.representation.search.labels.Issue;
 import nl.tkp.opleveringen.representation.search.labels.SearchLabelsResult;
+
 import javax.ws.rs.core.MediaType;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import javax.xml.bind.DatatypeConverter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,10 +39,12 @@ public class JerseyClientJiraSearchLabelsCall {
             qString += "&maxResult=" + vorigeLabelsResult.getMaxResults();
         }
 
-        ClientResponse clientResponse = Client.create(getClientConfig())
+        byte[] pwd = DatatypeConverter.parseBase64Binary("V2ludGVyMjAxNWI=");
+        HTTPBasicAuthFilter basicAuth = new HTTPBasicAuthFilter("scrumscherm", new String(pwd));
+        Client client = Client.create(getClientConfig());
+        client.addFilter(basicAuth);
+        ClientResponse clientResponse = client
                 .resource("http://jira/rest/api/latest/search?jql=labels=" + search + qString)
-                .header("Authorization", "Basic c2NydW1zY2hlcm06V2ludGVyMjAxNWE=")
-                .header("Connection", "Close")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(ClientResponse.class);
 

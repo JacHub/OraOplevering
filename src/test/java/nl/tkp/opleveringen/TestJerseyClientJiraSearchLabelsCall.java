@@ -11,7 +11,7 @@ import java.util.Map;
 public class TestJerseyClientJiraSearchLabelsCall {
 
     public static void main(String args[]) {
-        Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels("XXX_3.03.022");
+        Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels("TEST_1.23.456");
 
         for (Map.Entry<String,String> entry : stringMap.entrySet()) {
             System.out.println("[" + entry.getKey() + "] " + entry.getValue());

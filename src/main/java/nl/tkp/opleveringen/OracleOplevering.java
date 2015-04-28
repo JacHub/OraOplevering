@@ -1,6 +1,7 @@
 package nl.tkp.opleveringen;
 
 import nl.tkp.opleveringen.clientCalls.JerseyClientJiraSearchLabelsCall;
+import nl.tkp.opleveringen.threads.SearchLabelsCallThread;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -33,9 +34,11 @@ public class OracleOplevering {
     ArrayList<FileType> fileTypes;
     ArrayList<OracleObject> oracleObjecten;
 
+    private SearchLabelsCallThread jiraCall;
 
     OracleOplevering(List<File> fl, String foldername, String configFolderName) throws ConfigFileNotExistsException, ConfigFileNotValidException {
         this.versie = getVersionName(fl);
+        jiraCall = new SearchLabelsCallThread(this.versie); // 28-04-2015 Lveekhout: zo snel al het kan jira REST call afvuren.
         this.folder = foldername;
         FileTypes fts = new FileTypes(configFolderName);
         if (fts == null) {
@@ -249,7 +252,8 @@ public class OracleOplevering {
 
             // 03-03-2015 Lveekhout:
             try {
-                Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels(this.versie);
+//                Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels(this.versie);
+                Map<String,String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
 
                 if (stringMap.size()>0) {
                     regels.add("");

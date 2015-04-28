@@ -26,7 +26,7 @@ public class MaakOplevering {
             if (!args[0].isEmpty()) {
                 configFolderName = args[0];
             }
-            if (!args[0].isEmpty()) {
+            if (!args[1].isEmpty()) {
                 folderName = args[1];
             }
 
