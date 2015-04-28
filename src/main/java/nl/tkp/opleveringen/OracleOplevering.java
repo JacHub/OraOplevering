@@ -95,7 +95,7 @@ public class OracleOplevering {
         ArrayList<String> regels = new ArrayList<String>();
 
         if (!file.exists()) {
-            regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
+//            regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
             regels.add("set serveroutput on size 1000000");
             regels.add("");
             regels.add("spool " + this.versie + "_setup.lst");
@@ -105,9 +105,9 @@ public class OracleOplevering {
             regels.add("************* LET OP setup uitgebreid! *****************");
             regels.add("********************************************************");
         }
-        regels.add("");
-        regels.add("prompt Controleren of er niet al een nieuwere versie van het object bestaat.");
-        regels.add("@@" + this.versie + "_ins_versie_pre.sql");
+//        regels.add("");
+//        regels.add("prompt Controleren of er niet al een nieuwere versie van het object bestaat.");
+//        regels.add("@@" + this.versie + "_ins_versie_pre.sql");
         regels.add("");
 
         Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
@@ -165,23 +165,23 @@ public class OracleOplevering {
         regels.add("insert into gen_versies( deelapplicatie, versienummer) values ('" + getApplicatieId() + "','" + getVersieNummer() + "');");
         regels.add("");
 
-        Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
-        for (String oracleObject : oracleObjecten) {
-            if (!oracleObject.substring(0, 1).equals("#")) {
-                int eersteSeparator = oracleObject.indexOf('|') + 1;
-                int tweedeSeparator = oracleObject.indexOf('|', eersteSeparator) + 1;
-                int derdeSeparator = oracleObject.indexOf('|', tweedeSeparator);
-                if (derdeSeparator == -1) {
-                    System.out.println("Bestand is niet in het juiste formaat: " + oracleObject);
-                } else {
-                    regels.add("insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype) values ('"
-                            + getApplicatieId() + "', '"
-                            + getVersieNummer() + "', '"
-                            + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "', '"
-                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "');");
-                }
-            }
-        }
+//        Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
+//        for (String oracleObject : oracleObjecten) {
+//            if (!oracleObject.substring(0, 1).equals("#")) {
+//                int eersteSeparator = oracleObject.indexOf('|') + 1;
+//                int tweedeSeparator = oracleObject.indexOf('|', eersteSeparator) + 1;
+//                int derdeSeparator = oracleObject.indexOf('|', tweedeSeparator);
+//                if (derdeSeparator == -1) {
+//                    System.out.println("Bestand is niet in het juiste formaat: " + oracleObject);
+//                } else {
+//                    regels.add("insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype) values ('"
+//                            + getApplicatieId() + "', '"
+//                            + getVersieNummer() + "', '"
+//                            + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "', '"
+//                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "');");
+//                }
+//            }
+//        }
 
         regels.add("");
         regels.add("commit;");

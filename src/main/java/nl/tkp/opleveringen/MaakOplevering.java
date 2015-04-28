@@ -9,7 +9,9 @@ import java.util.List;
  */
 public class MaakOplevering {
     public static void main(String[] args) throws WrongVersionNameException, ConfigFileNotExistsException, ConfigFileNotValidException {
-
+        // TODO Om een oplevering uit te kunnen breiden met nieuwe objecten de Oplevering opslaan als JSON bestand in de oplevermap
+        // TODO Bij start eerst kijken of er een JSON oplever bestand is zoja deze eerst inlezen en nieuwe objecten er aan toevoegen
+        // TODO Dan obv van dit object een compleet nieuwe oplevering genereren.
         if (args.length != 2) {
             System.out.println("MaakOplevering " + args.length);
             System.out.println("FOUT!!");

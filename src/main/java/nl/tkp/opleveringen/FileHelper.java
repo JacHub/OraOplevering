@@ -64,8 +64,13 @@ public final class FileHelper {
 
     public static void moveFile(String from, String to) {
         try {
-            File afile = new File(from);
-            if (!afile.renameTo(new File(to))) {
+            File fromFile = new File(from);
+            File toFile = new File(to);
+            if (toFile.exists()) {
+                System.out.println("Bestand "+fromFile.getName()+" bestaat al en wordt overschreven!");
+                toFile.delete();
+            }
+            if (!fromFile.renameTo(new File(to))) {
                 System.out.println("Het verplaatsen van het bestand " + from + " naar " + to + " is fout gegaan!");
             }
 
