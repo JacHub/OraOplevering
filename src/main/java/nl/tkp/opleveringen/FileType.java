@@ -15,7 +15,7 @@ public class FileType {
         this.folderName = "";
         this.sequenceNumber = sequenceNumber;
         this.filePrefix = "Nee";
-        this.inSetup = inSetup;
+        this.inSetup = false;
     }
 
     @Override
