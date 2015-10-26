@@ -67,7 +67,7 @@ public final class FileHelper {
             File fromFile = new File(from);
             File toFile = new File(to);
             if (toFile.exists()) {
-                System.out.println("Bestand "+fromFile.getName()+" bestaat al en wordt overschreven!");
+                System.out.println("Bestand '"+fromFile.getName()+"' bestaat al en wordt overschreven!");
                 toFile.delete();
             }
             if (!fromFile.renameTo(new File(to))) {
@@ -105,7 +105,6 @@ public final class FileHelper {
             // trim evt al aanwezige versienummer
             int positieVersieNummer = file.getName().indexOf(versie);
             filename = file.getName();
-            newFilename = file.getName();
             if (positieVersieNummer >= 0) {
                 int positieSeparator = filename.indexOf('_', 7);
                 if (positieSeparator >= 0) {

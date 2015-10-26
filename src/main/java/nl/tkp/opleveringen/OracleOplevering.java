@@ -1,6 +1,5 @@
 package nl.tkp.opleveringen;
 
-import nl.tkp.opleveringen.clientCalls.JerseyClientJiraSearchLabelsCall;
 import nl.tkp.opleveringen.threads.SearchLabelsCallThread;
 
 import java.io.File;
@@ -46,7 +45,7 @@ public class OracleOplevering {
         }
         this.fileTypes = fts.fileTypes;
         if (this.fileTypes == null || this.fileTypes.size() == 0) {
-            throw new ConfigFileNotValidException("Inhoud van het onfig bestand niet juist.");
+            throw new ConfigFileNotValidException("Inhoud van het config bestand niet juist.");
         }
         this.oracleObjecten = new ArrayList<OracleObject>();
     }
@@ -64,7 +63,7 @@ public class OracleOplevering {
             oo.setInSetup(this.fileTypes.get(i).inSetup);
         } else {
             System.out.println("********************************************************************************************");
-            System.out.println("FileType " + oo.getFileType() + " NIET gevonden! Het bestand blijft in de huidige map staan.");
+            System.out.println("FileType '" + oo.getFileType() + "' NIET gevonden! Het bestand blijft in de huidige map staan.");
             System.out.println("********************************************************************************************");
             oo.setFolderName("");
             oo.setSequenceNumber(999);
@@ -253,13 +252,13 @@ public class OracleOplevering {
             // 03-03-2015 Lveekhout:
             try {
 //                Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels(this.versie);
-                Map<String,String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
+                Map<String, String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
 
-                if (stringMap.size()>0) {
+                if (stringMap.size() > 0) {
                     regels.add("");
                     regels.add("JIRA meldingen:");
 
-                    for (Map.Entry<String,String> entry : stringMap.entrySet()) {
+                    for (Map.Entry<String, String> entry : stringMap.entrySet()) {
                         regels.add("- [" + entry.getKey() + "] " + entry.getValue());
                     }
 

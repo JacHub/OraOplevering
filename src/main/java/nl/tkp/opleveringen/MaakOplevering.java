@@ -37,9 +37,8 @@ public class MaakOplevering {
                 List<File> fl = FileHelper.readFolder(folderName);
                 System.out.println("Huidige werkmap: " + folderName);
                 if (fl.size() == 0) {
-                    System.out.println("Geen bestanden in " + folderName + " aanwezig om een oplevering van te maken!");
+                    System.out.println("Geen bestanden in '" + folderName + "' aanwezig om een oplevering van te maken!");
                 } else {
-
                     OracleOplevering opl = new OracleOplevering(fl, folderName, configFolderName);
                     for (File bestand : fl) {
                         opl.addOracleObject(new OracleObject(bestand.getName()));
@@ -50,17 +49,14 @@ public class MaakOplevering {
                     String naarFolder = folderName + "\\ddl\\"; // map ddl altijd aanmaken!
                     FileHelper.createFolder(naarFolder);
                     for (OracleObject o : opl.oracleObjecten) {
-                        //
-                        // Aanmaken folders
-                        //
-                        if (!o.getFolderName().equals(naarFolder)) {
-                            naarFolder = folderName + "\\" + o.getFolderName() + "\\";
-                            FileHelper.createFolder(naarFolder);
+                        // Aanmaken folders en verplaatsen bestanden
+                        if (!o.getFolderName().equals("")) {
+                            if (!o.getFolderName().equals(naarFolder)) {
+                                naarFolder = folderName + "\\" + o.getFolderName() + "\\";
+                                FileHelper.createFolder(naarFolder);
+                            }
+                            FileHelper.moveFile(folderName + "\\" + o.getFileName(), naarFolder + o.getNewFileName(opl.versie));
                         }
-                        //
-                        // Verplaats de bestanden naar de juiste map
-                        //
-                        FileHelper.moveFile(folderName + "\\" + o.getFileName(), naarFolder + o.getNewFileName(opl.versie));
                     }
                     opl.createObjectenLijst();
                     opl.createSetup();
@@ -74,7 +70,7 @@ public class MaakOplevering {
                     System.out.println("De oplevering is aangemaakt!");
                 }
             } else {
-                System.out.println("De opgegeven map " + folderName + " bestaat niet of de naam voldoet niet aan de conventie van een versienummer. (XXXXXXX_9.99.999)");
+                System.out.println("De opgegeven map '" + folderName + "' bestaat niet of de naam voldoet niet aan de conventie van een versienummer. (XXXXXXX_9.99.999)");
             }
         }
     }
