@@ -152,7 +152,7 @@ public class OracleOplevering {
                     regels.add("declare l_ok varchar2(10);err EXCEPTION;PRAGMA EXCEPTION_INIT( err, -20000 ); begin execute immediate 'select gen_f_controleer_object_versie(''"
                             + getApplicatieId() + "'', ''"
                             + getVersieNummer() + "'', ''" + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
-                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'') from dual;' into l_ok; exception when err then raise; when others then null; end;");
+                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'') from dual' into l_ok; exception when err then raise; when others then null; end;");
                     regels.add("");
                 }
             }
@@ -181,7 +181,7 @@ public class OracleOplevering {
                             + getApplicatieId() + "'', ''"
                             + getVersieNummer() + "'', ''"
                             + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
-                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "''); exception when others null; end;");
+                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'')'; exception when others then null; end;");
                 }
             }
         }
