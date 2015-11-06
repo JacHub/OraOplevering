@@ -38,7 +38,7 @@ public class JerseyClientJiraSearchLabelsCall {
             qString += "&startAt=" + vorigeLabelsResult.getStartAt()+vorigeLabelsResult.getMaxResults();
             qString += "&maxResult=" + vorigeLabelsResult.getMaxResults();
         }
-
+        // password even omzetten via https://www.base64decode.org/
         byte[] pwd = DatatypeConverter.parseBase64Binary("R3JvbmluZ2VuMjAxNQ==");
         HTTPBasicAuthFilter basicAuth = new HTTPBasicAuthFilter("scrumscherm", new String(pwd));
         Client client = Client.create(getClientConfig());
