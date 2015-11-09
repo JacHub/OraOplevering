@@ -2,31 +2,13 @@ package nl.tkp.opleveringen;
 
 import nl.tkp.opleveringen.threads.SearchLabelsCallThread;
 
-import java.io.File;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * Created by Jacob on 12-11-2014.
  */
-class WrongVersionNameException extends Exception {
-    WrongVersionNameException(String s) {
-        super(s);
-    }
-}
-
-class ConfigFileNotExistsException extends Exception {
-    ConfigFileNotExistsException(String s) {
-        super(s);
-    }
-}
-
-class ConfigFileNotValidException extends Exception {
-    ConfigFileNotValidException(String s) {
-        super(s);
-    }
-}
-
 public class OracleOplevering {
     String versie;
     String folder;
@@ -334,6 +316,39 @@ public class OracleOplevering {
         return this.versie.substring(positieSeparator + 1);
     }
 
+    void saveOracleOplevering() {
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream(this.folder + "/oracleObjecten.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.oracleObjecten);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in " + this.folder + "/oracleObjecten.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    void loadOracleOplevering() {
+        try
+        {
+            FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            this.oracleObjecten = (ArrayList<OracleObject>) in.readObject();
+            in.close();
+            fileIn.close();
+        }catch(IOException i)
+        {
+            i.printStackTrace();
+            return;
+        }catch(ClassNotFoundException c)
+        {
+            System.out.println("ArraList class not found");
+            c.printStackTrace();
+            return;
+        }
+    }
     public String toString() {
         String returnString = "OralceOplevering: versie:" + this.versie + " folder " + folder + " ";
         for (OracleObject oo : oracleObjecten) {
@@ -341,4 +356,23 @@ public class OracleOplevering {
         }
         return returnString;
     }
+
+    class WrongVersionNameException extends Exception {
+        WrongVersionNameException(String s) {
+            super(s);
+        }
+    }
+
+    class ConfigFileNotExistsException extends Exception {
+        ConfigFileNotExistsException(String s) {
+            super(s);
+        }
+    }
+
+    class ConfigFileNotValidException extends Exception {
+        ConfigFileNotValidException(String s) {
+            super(s);
+        }
+    }
+
 }

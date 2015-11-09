@@ -3,12 +3,13 @@ package nl.tkp.opleveringen;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import nl.tkp.opleveringen.OracleOplevering.*;
 
 /**
  * Created by Jacob on 12-11-2014.
  */
 public class MaakOplevering {
-    public static void main(String[] args) throws WrongVersionNameException, ConfigFileNotExistsException, ConfigFileNotValidException {
+    public static void main(String[] args) throws Exception {
         // TODO Om een oplevering uit te kunnen breiden met nieuwe objecten de Oplevering opslaan als JSON bestand in de oplevermap
         // TODO Bij start eerst kijken of er een JSON oplever bestand is zoja deze eerst inlezen en nieuwe objecten er aan toevoegen
         // TODO Dan obv van dit object een compleet nieuwe oplevering genereren.
@@ -58,6 +59,7 @@ public class MaakOplevering {
                             FileHelper.moveFile(folderName + "\\" + o.getFileName(), naarFolder + o.getNewFileName(opl.versie));
                         }
                     }
+                    opl.saveOracleOplevering();
                     opl.createObjectenLijst();
                     opl.createSetup();
                     opl.createVersiePre();

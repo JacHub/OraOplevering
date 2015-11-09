@@ -114,7 +114,6 @@ public final class FileHelper {
                         if (!afile.renameTo(new File(folderName + "\\" + newFilename))) {
                             System.out.println("Het hernoemen van het bestand " + filename + " naar " + newFilename + " is fout gegaan!");
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -237,7 +236,6 @@ public final class FileHelper {
                     addToZip(directoryToZip, file, zos);
                 }
             }
-
             zos.close();
             fos.close();
         } catch (FileNotFoundException e) {

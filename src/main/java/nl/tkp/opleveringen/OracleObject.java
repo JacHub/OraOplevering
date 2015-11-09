@@ -1,11 +1,12 @@
 package nl.tkp.opleveringen;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
  * Created by Jacob on 10-11-2014.
  */
-public class OracleObject {
+public class OracleObject implements Serializable {
 
     private String fileName;
     private String fileType;
@@ -98,14 +99,14 @@ public class OracleObject {
 
     public static class OracleSequenceComparator implements Comparator<OracleObject> {
         //http://stackoverflow.com/questions/2784514/sort-arraylist-of-custom-objects-by-property
-        @Override
+//        @Override
         public int compare(OracleObject oracleObject1, OracleObject oracleObject2) {
             return oracleObject1.getSequenceNumber() - oracleObject2.getSequenceNumber();
         }
     }
     public static class OracleObjectNameComparator implements Comparator<OracleObject> {
         //http://stackoverflow.com/questions/2784514/sort-arraylist-of-custom-objects-by-property
-        @Override
+//        @Override
         public int compare(OracleObject oracleObject1, OracleObject oracleObject2) {
             String name1 = oracleObject1.getObjectName("")+"|"+oracleObject1.getFileType();
             String name2 = oracleObject2.getObjectName("")+"|"+oracleObject2.getFileType();
@@ -115,7 +116,7 @@ public class OracleObject {
 
     public static class OracleFolderNameComparator implements Comparator<OracleObject> {
         //http://stackoverflow.com/questions/2784514/sort-arraylist-of-custom-objects-by-property
-        @Override
+//        @Override
         public int compare(OracleObject oracleObject1, OracleObject oracleObject2) {
             return oracleObject1.getFolderName().compareTo(oracleObject2.getFolderName());
         }
