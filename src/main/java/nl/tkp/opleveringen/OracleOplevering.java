@@ -139,6 +139,7 @@ public class OracleOplevering {
          */
         ArrayList<String> regels = new ArrayList<String>();
         Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
+        regels.add("prompt controleer of er niet al een nieuwere versie van het object staat.");
         for (String oracleObject : oracleObjecten) {
             if (!oracleObject.substring(0, 1).equals("#")) {
 
@@ -148,12 +149,11 @@ public class OracleOplevering {
                 if (derdeSeparator == -1) {
                     System.out.println("Bestand is niet in het juiste formaat: " + oracleObject);
                 } else {
-                    regels.add("prompt controleer of er niet al een nieuwere versie van het object staat.");
                     regels.add("declare l_ok varchar2(10);err EXCEPTION;PRAGMA EXCEPTION_INIT( err, -20000 ); begin execute immediate 'select gen_f_controleer_object_versie(''"
                             + getApplicatieId() + "'', ''"
                             + getVersieNummer() + "'', ''" + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
                             + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'') from dual' into l_ok; exception when err then raise; when others then null; end;");
-                    regels.add("");
+                    regels.add("/");
                 }
             }
         }
