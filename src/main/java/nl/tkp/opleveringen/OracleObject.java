@@ -15,9 +15,6 @@ public class OracleObject implements Serializable {
     private String filePrefix;
     private boolean inSetup;
 
-    public OracleObject() {
-    }
-
     public OracleObject(String name) {
         this.fileName = name;
         this.fileType = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);

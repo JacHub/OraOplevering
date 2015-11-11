@@ -11,12 +11,12 @@ import java.util.*;
  */
 public class OracleOplevering {
 
-    String versie;
-    String folder;
-    ArrayList<FileType> fileTypes;
-    ArrayList<OracleObject> oracleObjecten;
-
+    private String versie;
+    private String folder;
+    private ArrayList<OracleObject> oracleObjecten;
+    private ArrayList<FileType> fileTypes;
     private SearchLabelsCallThread jiraCall;
+    private Map<String, String> jiraMeldingen = null;
 
     OracleOplevering(List<File> fl, String foldername, String configFolderName) throws ConfigFileNotExistsException, ConfigFileNotValidException {
         this.versie = getVersionName(fl);
@@ -172,6 +172,7 @@ public class OracleOplevering {
         Locale currentLocale = new Locale("nl");
         formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
         regels.add("Datum       : " + formatter.format(new Date()));
+        vulJiraMeldingen(regels);
         regels.add("Omschrijving: \n");
         regels.add("");
         regels.add("Volg de normale procedure voor het uitvoeren van het setup scripts.");
@@ -196,21 +197,7 @@ public class OracleOplevering {
         formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
         regels.add("Datum       : " + formatter.format(new Date()));
 
-        // 03-03-2015 Lveekhout:
-        try {
-            Map<String, String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
-
-            if (stringMap.size() > 0) {
-                regels.add("");
-                regels.add("JIRA meldingen:");
-                for (Map.Entry<String, String> entry : stringMap.entrySet()) {
-                    regels.add("- [" + entry.getKey() + "] " + entry.getValue());
-                }
-                regels.add("");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        vulJiraMeldingen(regels);
 
         regels.add("Omschrijving: ");
         regels.add("");
@@ -227,6 +214,25 @@ public class OracleOplevering {
             regels.add(" - " + o.getObjectName(versie));
         }
         FileHelper.generateFile(filename, regels);
+    }
+
+    private void vulJiraMeldingen(ArrayList<String> regels) {
+        // 03-03-2015 Lveekhout:
+        try {
+            if (jiraMeldingen == null) {
+                jiraMeldingen = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
+            }
+            if (jiraMeldingen.size() > 0) {
+                regels.add("");
+                regels.add("JIRA meldingen:");
+                for (Map.Entry<String, String> entry : jiraMeldingen.entrySet()) {
+                    regels.add("- [" + entry.getKey() + "] " + entry.getValue());
+                }
+                regels.add("");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getApplicatieId() throws WrongVersionNameException {
