@@ -1,5 +1,7 @@
 package nl.tkp.opleveringen;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +23,15 @@ public class MaakOplevering {
             System.out.println("De map waar het configuratie bestand filetyps.json staat en een map waar de oplevering staat");
             System.out.println("Bijvoorbeeld:");
             System.out.println("MaakOplevering g:\\werk\\config g:\\werk\\IBRRFE_1.02.003");
+            System.out.println("");
+            System.out.println("Maak een map met als naam de versie van de oplevering. bv ARS_1.02.003 of ARS_1.02.003_hf1 (let op er mogen geen spaties in staan!)");
+            System.out.println("Zet in deze map de bestanden met of zonder de versie prefix.");
+            System.out.println("Maak per object een bestand met de naam van het object en gebruik hierbij de bekende filetypes zoals tab, fnc en pks enz.");
+            System.out.println("");
+            System.out.println("Als er al een oplevering gegenereerd is kan er een nieuw object toegevoegd worden door dit in de root map te plaatsen en");
+            System.out.println("opnieuw een oplevering te genereren.");
+            System.out.println("Bestaat het object al dan wordt dit overschreven.");
+            System.out.println("De oplevering wordt in zijn geheel opnieuw gegenereerd en achteraf gemaakte wijzigingen in b.v. de setup.sql worden overschreven.");
         } else {
             String configFolderName = "";
             String folderName = "";
@@ -31,7 +42,7 @@ public class MaakOplevering {
                 folderName = args[1];
             }
 
-            if (FileHelper.folderExists(folderName) && FileHelper.getCurrentFolderName(folderName).matches("\\S{3,7}_\\d.\\d\\d.\\d\\d\\d")) {
+            if (FileHelper.folderExists(folderName) && FileHelper.getCurrentFolderName(folderName).matches("\\S{3,7}_\\d.\\d\\d.\\d\\d\\d(_\\w{0,4})*")) {
 
                 FileHelper.removeFilePrefixes(folderName);
 
@@ -51,7 +62,6 @@ public class MaakOplevering {
                     verplaatsBestanden(folderName, opl);
                     opleveringUitbreiden(opl);
                     opl.saveOracleOplevering();
-                    opl.createObjectenLijst();
                     opl.createSetup();
                     opl.createVersiePre();
                     opl.createVersiePost();
@@ -93,5 +103,4 @@ public class MaakOplevering {
             }
         }
     }
-
 }
