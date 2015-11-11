@@ -32,6 +32,8 @@ public final class FileHelper {
                         && !fileEntry.getName().contains(".txt")
                         && !fileEntry.getName().contains(".json")
                         && !fileEntry.getName().contains(".cfg")
+                        && !fileEntry.getName().contains(".ser")
+                        && !fileEntry.getName().contains(".cmd")
                         && !fileEntry.getName().contains("actionnotes")
                         && !fileEntry.getName().contains("releasenotes")
                         && !fileEntry.getName().contains("setup")
@@ -67,11 +69,24 @@ public final class FileHelper {
             File fromFile = new File(from);
             File toFile = new File(to);
             if (toFile.exists()) {
-                System.out.println("Bestand '"+fromFile.getName()+"' bestaat al en wordt overschreven!");
+                System.out.println("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
                 toFile.delete();
             }
             if (!fromFile.renameTo(new File(to))) {
                 System.out.println("Het verplaatsen van het bestand " + from + " naar " + to + " is fout gegaan!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteFile(String filename) {
+        try {
+            File file = new File(filename);
+            if (file.exists()) {
+                System.out.println("Bestand '" + file.getName() + "' bestaat en wordt verwijderd!");
+                file.delete();
             }
 
         } catch (Exception e) {
@@ -141,43 +156,22 @@ public final class FileHelper {
         File file = null;
         try {
             file = new File(filename);
-            boolean fileBestaatAl = true;
             boolean appendFile = false;
 
-            if (!file.exists()) {
-                file.createNewFile();
-                fileBestaatAl = false;
+            if (file.exists()) {
+                file.delete();
             }
-            if (fileBestaatAl && (file.getName().contains("releasenotes") || file.getName().contains("GewijzigdeObjecten"))) {
-                appendFile = true;
-                System.out.println("Uitbreiden: " + filename);
-            } else {
-                if (fileBestaatAl && file.getName().contains("setup")) {
-                    // het gaat hier om de setup dus bestaande file uitbreiden met nieuwe objecten
-                    appendFile = true;
-                    System.out.println("");
-                    System.out.println("**************************** LET OP! ****************************");
-                    System.out.println("      Het setup script is uitgebreid met nieuwe objecten");
-                    System.out.println("                Pas het setup script aan!");
-                    System.out.println("*****************************************************************");
-                    System.out.println("");
-                } else {
-                    appendFile = false;
-                    System.out.println("Aanmaken  : " + filename);
-                }
-            }
-            /* Als de file nog niet bestaat of wel bestaat maar ongelijk is aan de config en de actionnotes dan
-               schrijven regels
-            */
-            if (!(fileBestaatAl && (file.getName().contains("oplevering.cfg") || file.getName().contains("actionnotes")))) {
-                fw = new FileWriter(file, appendFile);
 
-                for (String regel : regels) {
-                    fw.write(regel + "\r\n");
-                }
-                fw.flush();
-                fw.close();
+            file.createNewFile();
+            appendFile = false;
+            System.out.println("Aanmaken  : " + filename);
+            fw = new FileWriter(file, appendFile);
+
+            for (String regel : regels) {
+                fw.write(regel + "\r\n");
             }
+            fw.flush();
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

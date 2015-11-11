@@ -1,9 +1,9 @@
 package nl.tkp.opleveringen;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import nl.tkp.opleveringen.OracleOplevering.*;
 
 /**
  * Created by Jacob on 12-11-2014.
@@ -41,24 +41,15 @@ public class MaakOplevering {
                     System.out.println("Geen bestanden in '" + folderName + "' aanwezig om een oplevering van te maken!");
                 } else {
                     OracleOplevering opl = new OracleOplevering(fl, folderName, configFolderName);
+
                     for (File bestand : fl) {
                         opl.addOracleObject(new OracleObject(bestand.getName()));
                     }
                     //System.out.println( "Oracle oplevering= "+opl.toString());
 
                     Collections.sort(opl.oracleObjecten, new OracleObject.OracleFolderNameComparator());
-                    String naarFolder = folderName + "\\ddl\\"; // map ddl altijd aanmaken!
-                    FileHelper.createFolder(naarFolder);
-                    for (OracleObject o : opl.oracleObjecten) {
-                        // Aanmaken folders en verplaatsen bestanden
-                        if (!o.getFolderName().equals("")) {
-                            if (!o.getFolderName().equals(naarFolder)) {
-                                naarFolder = folderName + "\\" + o.getFolderName() + "\\";
-                                FileHelper.createFolder(naarFolder);
-                            }
-                            FileHelper.moveFile(folderName + "\\" + o.getFileName(), naarFolder + o.getNewFileName(opl.versie));
-                        }
-                    }
+                    verplaatsBestanden(folderName, opl);
+                    opleveringUitbreiden(opl);
                     opl.saveOracleOplevering();
                     opl.createObjectenLijst();
                     opl.createSetup();
@@ -73,6 +64,32 @@ public class MaakOplevering {
                 }
             } else {
                 System.out.println("De opgegeven map '" + folderName + "' bestaat niet of de naam voldoet niet aan de conventie van een versienummer. (XXXXXXX_9.99.999)");
+            }
+        }
+    }
+
+    private static void verplaatsBestanden(String folderName, OracleOplevering opl) {
+        String naarFolder = folderName + "\\ddl\\"; // map ddl altijd aanmaken!
+        FileHelper.createFolder(naarFolder);
+        for (OracleObject o : opl.oracleObjecten) {
+            // Aanmaken folders en verplaatsen bestanden
+            if (!o.getFolderName().equals("")) {
+                if (!o.getFolderName().equals(naarFolder)) {
+                    naarFolder = folderName + "\\" + o.getFolderName() + "\\";
+                    FileHelper.createFolder(naarFolder);
+                }
+                FileHelper.moveFile(folderName + "\\" + o.getFileName(), naarFolder + o.getNewFileName(opl.versie));
+            }
+        }
+    }
+
+    private static void opleveringUitbreiden(OracleOplevering opl) {
+        // evt. toevoegen al eerder opgeleverde objecten
+        ArrayList<OracleObject> vorigeOracleObjectenInOplevering = opl.loadOracleOplevering();
+        if (vorigeOracleObjectenInOplevering != null) {
+            for (OracleObject vorigObject : vorigeOracleObjectenInOplevering) {
+                opl.addOracleObject(vorigObject);
+                System.out.println("Oplevering wordt uitgebreid met nieuwe objecten.");
             }
         }
     }

@@ -10,6 +10,7 @@ import java.util.*;
  * Created by Jacob on 12-11-2014.
  */
 public class OracleOplevering {
+
     String versie;
     String folder;
     ArrayList<FileType> fileTypes;
@@ -74,21 +75,13 @@ public class OracleOplevering {
          * Aanmaken setup script
          */
         String filename = this.folder + "\\ddl\\" + this.versie + "_setup.sql";
-        File file = new File(filename);
         String scriptPrefix = "@@";
         ArrayList<String> regels = new ArrayList<String>();
+        regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
+        regels.add("set serveroutput on size 1000000");
+        regels.add("");
+        regels.add("spool " + this.versie + "_setup.lst");
 
-        if (!file.exists()) {
-            regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
-            regels.add("set serveroutput on size 1000000");
-            regels.add("");
-            regels.add("spool " + this.versie + "_setup.lst");
-        } else {
-            scriptPrefix = "-- @@";
-            regels.add("********************************************************");
-            regels.add("************* LET OP setup uitgebreid! *****************");
-            regels.add("********************************************************");
-        }
         regels.add("");
         regels.add("prompt Controleren of er niet al een nieuwere versie van het object bestaat.");
         regels.add("@@" + this.versie + "_ins_versie_pre.sql");
@@ -122,6 +115,7 @@ public class OracleOplevering {
         ArrayList<String> regels = new ArrayList<String>();
         Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
         regels.add("prompt controleer of er niet al een nieuwere versie van het object staat.");
+        regels.add("");
         for (String oracleObject : oracleObjecten) {
             if (!oracleObject.substring(0, 1).equals("#")) {
 
@@ -164,6 +158,7 @@ public class OracleOplevering {
                             + getVersieNummer() + "'', ''"
                             + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
                             + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'')'; exception when others then null; end;");
+                    regels.add("/");
                 }
             }
         }
@@ -218,43 +213,39 @@ public class OracleOplevering {
          / Aanmaken Releasenotes
          */
         String filename = this.folder + "\\" + this.versie + "_releasenotes.txt";
-        File file = new File(filename);
         ArrayList<String> regels = new ArrayList<String>();
 
-        if (!file.exists()) {
-            regels.add("Releasenotes");
-            regels.add("");
-            regels.add("Auteur      : " + System.getProperty("user.name"));
-            regels.add("Versie      : " + this.versie);
+        regels.add("Releasenotes");
+        regels.add("");
+        regels.add("Auteur      : " + System.getProperty("user.name"));
+        regels.add("Versie      : " + this.versie);
 
-            SimpleDateFormat formatter;
-            Locale currentLocale = new Locale("nl");
-            formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
-            regels.add("Datum       : " + formatter.format(new Date()));
+        SimpleDateFormat formatter;
+        Locale currentLocale = new Locale("nl");
+        formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
+        regels.add("Datum       : " + formatter.format(new Date()));
 
-            // 03-03-2015 Lveekhout:
-            try {
-//                Map<String,String> stringMap = new JerseyClientJiraSearchLabelsCall().haalJiraStoriesVanLabels(this.versie);
-                Map<String, String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
+        // 03-03-2015 Lveekhout:
+        try {
+            Map<String, String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
 
-                if (stringMap.size() > 0) {
-                    regels.add("");
-                    regels.add("JIRA meldingen:");
+            if (stringMap.size() > 0) {
+                regels.add("");
+                regels.add("JIRA meldingen:");
 
-                    for (Map.Entry<String, String> entry : stringMap.entrySet()) {
-                        regels.add("- [" + entry.getKey() + "] " + entry.getValue());
-                    }
-
-                    regels.add("");
+                for (Map.Entry<String, String> entry : stringMap.entrySet()) {
+                    regels.add("- [" + entry.getKey() + "] " + entry.getValue());
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-            regels.add("Omschrijving: ");
-            regels.add("");
-            regels.add("De release bestaat uit de volgende scripts en of objecten:");
+                regels.add("");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        regels.add("Omschrijving: ");
+        regels.add("");
+        regels.add("De release bestaat uit de volgende scripts en of objecten:");
         regels.add("");
 
         Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
@@ -270,8 +261,9 @@ public class OracleOplevering {
     }
 
     public void createObjectenLijst() {
+//TODO deze is niet meer nodig omdat het object gesaved wordt
         /**
-         / Aanmaken Releasenotes
+         / Aanmaken Bestand met alle objecten die opgeleverd gaan worden
          */
         String filename = this.folder + "\\GewijzigdeObjecten.txt";
         File file = new File(filename);
@@ -324,31 +316,30 @@ public class OracleOplevering {
             out.writeObject(this.oracleObjecten);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in " + this.folder + "/oracleObjecten.ser");
+            System.out.println("Serialized data is opgeslagen in " + this.folder + "/oracleObjecten.ser");
         } catch (IOException i) {
             i.printStackTrace();
         }
     }
 
-    void loadOracleOplevering() {
-        try
-        {
-            FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
+    ArrayList<OracleObject> loadOracleOplevering() {
+        try {
+            FileInputStream fileIn = new FileInputStream(this.folder + "/oracleObjecten.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            this.oracleObjecten = (ArrayList<OracleObject>) in.readObject();
+            ArrayList<OracleObject> oracleObjecten = (ArrayList<OracleObject>) in.readObject();
             in.close();
             fileIn.close();
-        }catch(IOException i)
-        {
-            i.printStackTrace();
-            return;
-        }catch(ClassNotFoundException c)
-        {
-            System.out.println("ArraList class not found");
+            return oracleObjecten;
+        } catch (IOException i) {
+            System.out.println("Bestand oracleObjecten.ser niet gevonden, waarschijnlijk gaat het hier om een nieuwe oplevering!");
+            return null;
+        } catch (ClassNotFoundException c) {
+            System.out.println("ArrayList class not found");
             c.printStackTrace();
-            return;
+            return null;
         }
     }
+
     public String toString() {
         String returnString = "OralceOplevering: versie:" + this.versie + " folder " + folder + " ";
         for (OracleObject oo : oracleObjecten) {
