@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Jacob on 12-11-2014.
@@ -47,7 +49,8 @@ public class MaakOplevering {
                     }
                     //System.out.println( "Oracle oplevering= "+opl.toString());
 
-                    Collections.sort(opl.oracleObjecten, new OracleObject.OracleFolderNameComparator());
+//                    Collections.sort(opl.oracleObjecten, new OracleObject.OracleFolderNameComparator());
+                    opl.oracleObjecten.stream().sorted(new OracleObject.OracleFolderNameComparator()).collect(Collectors.toList());
                     verplaatsBestanden(folderName, opl);
                     opleveringUitbreiden(opl);
                     opl.saveOracleOplevering();
@@ -85,7 +88,7 @@ public class MaakOplevering {
 
     private static void opleveringUitbreiden(OracleOplevering opl) {
         // evt. toevoegen al eerder opgeleverde objecten
-        ArrayList<OracleObject> vorigeOracleObjectenInOplevering = opl.loadOracleOplevering();
+        Set<OracleObject> vorigeOracleObjectenInOplevering = opl.loadOracleOplevering();
         if (vorigeOracleObjectenInOplevering != null) {
             for (OracleObject vorigObject : vorigeOracleObjectenInOplevering) {
                 opl.addOracleObject(vorigObject);
