@@ -10,6 +10,14 @@ public class FileType {
     public String filePrefix;
     public boolean inSetup;
 
+    public FileType(String name, int sequenceNumber, String folderName, String filePrefix, boolean inSetup) {
+        this.name = name;
+        this.sequenceNumber = sequenceNumber;
+        this.folderName = folderName;
+        this.filePrefix = filePrefix;
+        this.inSetup = inSetup;
+    }
+
     FileType(String name, int sequenceNumber) {
         this.name = name;
         this.folderName = "";

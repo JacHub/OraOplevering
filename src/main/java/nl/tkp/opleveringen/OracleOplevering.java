@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
  */
 public class OracleOplevering {
 
-    String versie;
-    String folder;
-    ArrayList<FileType> fileTypes;
-    Set<OracleObject> oracleObjecten;
-
+    private String versie;
+    private String folder;
+    private ArrayList<OracleObject> oracleObjecten;
+    private ArrayList<FileType> fileTypes;
     private SearchLabelsCallThread jiraCall;
+    private Map<String, String> jiraMeldingen = null;
 
     OracleOplevering(List<File> fl, String foldername, String configFolderName) throws ConfigFileNotExistsException, ConfigFileNotValidException {
         this.versie = getVersionName(fl);
@@ -115,25 +115,14 @@ public class OracleOplevering {
          * Aanmaken insertscript voor het versienummer
          */
         ArrayList<String> regels = new ArrayList<String>();
-        Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
         regels.add("prompt controleer of er niet al een nieuwere versie van het object staat.");
         regels.add("");
-        for (String oracleObject : oracleObjecten) {
-            if (!oracleObject.substring(0, 1).equals("#")) {
-
-                int eersteSeparator = oracleObject.indexOf('|') + 1;
-                int tweedeSeparator = oracleObject.indexOf('|', eersteSeparator) + 1;
-                int derdeSeparator = oracleObject.indexOf('|', tweedeSeparator);
-                if (derdeSeparator == -1) {
-                    System.out.println("Bestand is niet in het juiste formaat: " + oracleObject);
-                } else {
-                    regels.add("declare l_ok varchar2(10);err EXCEPTION;PRAGMA EXCEPTION_INIT( err, -20000 ); begin execute immediate 'select gen_f_controleer_object_versie(''"
-                            + getApplicatieId() + "'', ''"
-                            + getVersieNummer() + "'', ''" + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
-                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'') from dual' into l_ok; exception when err then raise; when others then null; end;");
-                    regels.add("/");
-                }
-            }
+        for (OracleObject oracleObject : this.oracleObjecten) {
+            regels.add("declare l_ok varchar2(10);err EXCEPTION;PRAGMA EXCEPTION_INIT( err, -20000 ); begin execute immediate 'select gen_f_controleer_object_versie(''"
+                    + getApplicatieId() + "'', ''"
+                    + getVersieNummer() + "'', ''" + oracleObject.getFileName() + "'', ''"
+                    + oracleObject.getFileType() + "'') from dual' into l_ok; exception when err then raise; when others then null; end;");
+            regels.add("/");
         }
         FileHelper.generateFile(this.folder + "\\ddl\\" + this.versie + "_ins_versie_pre.sql", regels);
     }
@@ -145,26 +134,14 @@ public class OracleOplevering {
         ArrayList<String> regels = new ArrayList<String>();
         regels.add("insert into gen_versies( deelapplicatie, versienummer) values ('" + getApplicatieId() + "','" + getVersieNummer() + "');");
         regels.add("");
-
-        Set<String> oracleObjecten = FileHelper.readFile(this.folder + "\\GewijzigdeObjecten.txt");
-        for (String oracleObject : oracleObjecten) {
-            if (!oracleObject.substring(0, 1).equals("#")) {
-                int eersteSeparator = oracleObject.indexOf('|') + 1;
-                int tweedeSeparator = oracleObject.indexOf('|', eersteSeparator) + 1;
-                int derdeSeparator = oracleObject.indexOf('|', tweedeSeparator);
-                if (derdeSeparator == -1) {
-                    System.out.println("Bestand is niet in het juiste formaat: " + oracleObject);
-                } else {
-                    regels.add("begin execute immediate 'insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype) values (''"
-                            + getApplicatieId() + "'', ''"
-                            + getVersieNummer() + "'', ''"
-                            + oracleObject.substring(eersteSeparator, tweedeSeparator - 1) + "'', ''"
-                            + oracleObject.substring(tweedeSeparator, derdeSeparator) + "'')'; exception when others then null; end;");
-                    regels.add("/");
-                }
-            }
+        for (OracleObject oracleObject : this.oracleObjecten) {
+            regels.add("begin execute immediate 'insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype) values (''"
+                    + getApplicatieId() + "'', ''"
+                    + getVersieNummer() + "'', ''"
+                    + oracleObject.getFileName() + "'', ''"
+                    + oracleObject.getFileType() + "'')'; exception when others then null; end;");
+            regels.add("/");
         }
-
         regels.add("");
         regels.add("commit;");
         regels.add("");
@@ -195,12 +172,11 @@ public class OracleOplevering {
         regels.add("");
         regels.add("Auteur      : " + System.getProperty("user.name"));
         regels.add("Versie      : " + this.versie);
-
         SimpleDateFormat formatter;
         Locale currentLocale = new Locale("nl");
         formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
         regels.add("Datum       : " + formatter.format(new Date()));
-
+        vulJiraMeldingen(regels);
         regels.add("Omschrijving: \n");
         regels.add("");
         regels.add("Volg de normale procedure voor het uitvoeren van het setup scripts.");
@@ -216,34 +192,16 @@ public class OracleOplevering {
          */
         String filename = this.folder + "\\" + this.versie + "_releasenotes.txt";
         ArrayList<String> regels = new ArrayList<String>();
-
         regels.add("Releasenotes");
         regels.add("");
         regels.add("Auteur      : " + System.getProperty("user.name"));
         regels.add("Versie      : " + this.versie);
-
         SimpleDateFormat formatter;
         Locale currentLocale = new Locale("nl");
         formatter = new SimpleDateFormat("EEEEEEEEEE dd-MM-yyyy H:mm:ss", currentLocale);
         regels.add("Datum       : " + formatter.format(new Date()));
 
-        // 03-03-2015 Lveekhout:
-        try {
-            Map<String, String> stringMap = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
-
-            if (stringMap.size() > 0) {
-                regels.add("");
-                regels.add("JIRA meldingen:");
-
-                for (Map.Entry<String, String> entry : stringMap.entrySet()) {
-                    regels.add("- [" + entry.getKey() + "] " + entry.getValue());
-                }
-
-                regels.add("");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        vulJiraMeldingen(regels);
 
         regels.add("Omschrijving: ");
         regels.add("");
@@ -263,31 +221,23 @@ public class OracleOplevering {
         FileHelper.generateFile(filename, regels);
     }
 
-    public void createObjectenLijst() {
-//TODO deze is niet meer nodig omdat het object gesaved wordt
-        /**
-         / Aanmaken Bestand met alle objecten die opgeleverd gaan worden
-         */
-        String filename = this.folder + "\\GewijzigdeObjecten.txt";
-        File file = new File(filename);
-        ArrayList<String> regels = new ArrayList<String>();
-
-        if (!file.exists()) {
-            regels.add("#|Naam en type van de objecten welke opgeleverd worden.");
-            regels.add("#|Naam|Type|");
-        }
-
-//        Collections.sort(this.oracleObjecten, new OracleObject.OracleObjectNameComparator());
-        this.oracleObjecten.stream().sorted(new OracleObject.OracleObjectNameComparator()).collect(Collectors.toList());
-        String vorigeObjectNaam = "#";
-        for (OracleObject o : this.oracleObjecten) {
-            // objectnamen ontdubbelen
-            if (!vorigeObjectNaam.equals(o.getObjectName(this.versie))) {
-                regels.add("|" + o.getObjectName(this.versie).toUpperCase() + "|" + o.getFileType().toUpperCase() + "|");
-                vorigeObjectNaam = o.getObjectName(this.versie) + "|" + o.getFileType();
+    private void vulJiraMeldingen(ArrayList<String> regels) {
+        // 03-03-2015 Lveekhout:
+        try {
+            if (jiraMeldingen == null) {
+                jiraMeldingen = jiraCall.resultaat(); // 28-04-2015 Lveekhout: haal resultaat van de jira REST call thread.
             }
+            if (jiraMeldingen.size() > 0) {
+                regels.add("");
+                regels.add("JIRA meldingen:");
+                for (Map.Entry<String, String> entry : jiraMeldingen.entrySet()) {
+                    regels.add("- [" + entry.getKey() + "] " + entry.getValue());
+                }
+                regels.add("");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        FileHelper.generateFile(filename, regels);
     }
 
     public String getApplicatieId() throws WrongVersionNameException {
@@ -314,14 +264,14 @@ public class OracleOplevering {
 
     void saveOracleOplevering() {
         try {
-            FileOutputStream fileOut =
-                    new FileOutputStream(this.folder + "/oracleObjecten.ser");
+            FileOutputStream fileOut = new FileOutputStream(this.folder + "/oracleObjecten.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.oracleObjecten);
             out.close();
             fileOut.close();
             System.out.println("Serialized data is opgeslagen in " + this.folder + "/oracleObjecten.ser");
         } catch (IOException i) {
+            System.out.println("Oplevering kan niet opgeslagen worden!");
             i.printStackTrace();
         }
     }
@@ -338,9 +288,9 @@ public class OracleOplevering {
             System.out.println("Bestand oracleObjecten.ser niet gevonden, waarschijnlijk gaat het hier om een nieuwe oplevering!");
             return null;
         } catch (ClassNotFoundException c) {
-            System.out.println("ArrayList class not found");
+            System.out.println("oracleObjecten.ser gevonden welke niet gedeserialized kan worden naar de class OracleObject.");
             c.printStackTrace();
-            return null;
+            throw new RuntimeException("oracleObjecten.ser gevonden welke niet gedeserialized kan worden naar de class OracleObject. Verwijder dit bestand en verplaats alle bestanden weer naar de oplevermap en genereer de oplevering opnieuw!");
         }
     }
 
