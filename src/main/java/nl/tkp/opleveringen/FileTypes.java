@@ -31,19 +31,21 @@ public class FileTypes {
     }
 
     FileTypes() {
-        this.fileTypes.add(new FileType("seq", 1, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("tab", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("ind", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("sql", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("prc", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("fnc", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("pks", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("pkb", 2, "ddl", "Ja", true));
-        this.fileTypes.add(new FileType("fmb", 99, "fmb", "Nee", false));
-        this.fileTypes.add(new FileType("fmx", 99, "fmb", "Nee", false));
-        this.fileTypes.add(new FileType("rdf", 99, "fmb", "Nee", false));
-        this.fileTypes.add(new FileType("pll", 99, "fmb", "Nee", false));
-        this.fileTypes.add(new FileType("plx", 99, "fmb", "Nee", false));
+        ArrayList<FileType> fileTypes = new ArrayList<FileType>();
+        fileTypes.add(new FileType("seq", 1, "ddl", "Ja", true));
+        fileTypes.add(new FileType("tab", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("ind", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("sql", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("prc", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("fnc", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("pks", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("pkb", 2, "ddl", "Ja", true));
+        fileTypes.add(new FileType("fmb", 99, "fmb", "Nee", false));
+        fileTypes.add(new FileType("fmx", 99, "fmb", "Nee", false));
+        fileTypes.add(new FileType("rdf", 99, "fmb", "Nee", false));
+        fileTypes.add(new FileType("pll", 99, "fmb", "Nee", false));
+        fileTypes.add(new FileType("plx", 99, "fmb", "Nee", false));
+        this.fileTypes = fileTypes;
     }
 
     public String toString() {
