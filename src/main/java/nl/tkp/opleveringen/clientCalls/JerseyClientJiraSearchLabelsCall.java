@@ -39,7 +39,7 @@ public class JerseyClientJiraSearchLabelsCall {
             qString += "&maxResult=" + vorigeLabelsResult.getMaxResults();
         }
         // password even omzetten via https://www.base64decode.org/
-        byte[] pwd = DatatypeConverter.parseBase64Binary("TGFzZXIwMTE=");
+        byte[] pwd = DatatypeConverter.parseBase64Binary("xxxxxxxx");
         HTTPBasicAuthFilter basicAuth = new HTTPBasicAuthFilter("huizenga.j", new String(pwd));
         Client client = Client.create(getClientConfig());
         client.addFilter(basicAuth);
