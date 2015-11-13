@@ -5,17 +5,15 @@ import nl.tkp.opleveringen.threads.SearchLabelsCallThread;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * Created by Jacob on 12-11-2014.
  */
 public class OracleOplevering {
 
-    private String versie;
-    private String folder;
-    private ArrayList<OracleObject> oracleObjecten;
+    public String versie;
+    public String folder;
+    public ArrayList<OracleObject> oracleObjecten;
     private ArrayList<FileType> fileTypes;
     private SearchLabelsCallThread jiraCall;
     private Map<String, String> jiraMeldingen = null;
@@ -32,7 +30,7 @@ public class OracleOplevering {
         if (this.fileTypes == null || this.fileTypes.size() == 0) {
             throw new ConfigFileNotValidException("Inhoud van het config bestand niet juist.");
         }
-        this.oracleObjecten = new HashSet<OracleObject>();
+        this.oracleObjecten = new ArrayList<OracleObject>();
     }
 
     public void addOracleObject(OracleObject oo) {
@@ -90,8 +88,7 @@ public class OracleOplevering {
         regels.add("prompt Controleren of er niet al een nieuwere versie van het object bestaat.");
         regels.add("@@" + this.versie + "_ins_versie_pre.sql");
         regels.add("");
-        this.oracleObjecten.stream().sorted(new OracleObject.OracleSequenceComparator()).collect(Collectors.toList());
-//        Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
+        Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
         String vorigeFiletype = "xx";
         for (OracleObject o : this.oracleObjecten) {
             if (o.getInSetup()) {
@@ -210,8 +207,7 @@ public class OracleOplevering {
         regels.add("De release bestaat uit de volgende scripts en of objecten:");
         regels.add("");
 
-//        Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
-        this.oracleObjecten.stream().sorted(new OracleObject.OracleSequenceComparator()).collect(Collectors.toList());
+        Collections.sort(this.oracleObjecten, new OracleObject.OracleSequenceComparator());
         String vorigeType = "#";
         for (OracleObject o : this.oracleObjecten) {
             if (!o.getFileType().equals(vorigeType)) {
@@ -278,11 +274,11 @@ public class OracleOplevering {
         }
     }
 
-    Set<OracleObject> loadOracleOplevering() {
+    ArrayList<OracleObject> loadOracleOplevering() {
         try {
             FileInputStream fileIn = new FileInputStream(this.folder + "/oracleObjecten.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            Set<OracleObject> oracleObjecten = (Set<OracleObject>) in.readObject();
+            ArrayList<OracleObject> oracleObjecten = (ArrayList<OracleObject>) in.readObject();
             in.close();
             fileIn.close();
             return oracleObjecten;
