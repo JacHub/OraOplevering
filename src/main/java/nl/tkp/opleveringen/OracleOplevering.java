@@ -46,6 +46,9 @@ public class OracleOplevering {
             oo.setSequenceNumber(this.fileTypes.get(i).sequenceNumber);
             oo.setFilePrefix(this.fileTypes.get(i).filePrefix);
             oo.setInSetup(this.fileTypes.get(i).inSetup);
+            if (!this.oracleObjecten.contains(oo)) {
+                this.oracleObjecten.add(oo);
+            }
         } else {
             System.out.println("********************************************************************************************");
             System.out.println("FileType '" + oo.getFileType() + "' NIET gevonden! Het bestand blijft in de huidige map staan.");
@@ -55,7 +58,6 @@ public class OracleOplevering {
             oo.setFilePrefix("Nee");
             oo.setInSetup(false);
         }
-        this.oracleObjecten.add(oo);
     }
 
     private String getVersionName(List<File> fl) {

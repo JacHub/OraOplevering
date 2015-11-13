@@ -94,6 +94,25 @@ public class OracleObject implements Serializable {
         return objectName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OracleObject that = (OracleObject) o;
+
+        if (fileName != null ? !fileName.equals(that.fileName) : that.fileName != null) return false;
+        return !(fileType != null ? !fileType.equals(that.fileType) : that.fileType != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fileName != null ? fileName.hashCode() : 0;
+        result = 31 * result + (fileType != null ? fileType.hashCode() : 0);
+        return result;
+    }
+
     public static class OracleSequenceComparator implements Comparator<OracleObject> {
         //http://stackoverflow.com/questions/2784514/sort-arraylist-of-custom-objects-by-property
 //        @Override
