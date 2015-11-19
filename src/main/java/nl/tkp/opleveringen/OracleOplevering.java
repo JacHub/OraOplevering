@@ -80,7 +80,7 @@ public class OracleOplevering {
         String filename = this.folder + "\\ddl\\" + this.versie + "_setup.sql";
         String scriptPrefix = "@@";
         ArrayList<String> regels = new ArrayList<String>();
-        regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
+//        regels.add(("WHENEVER SQLERROR EXIT SQL.SQLCODE"));
         regels.add("set serveroutput on size 1000000");
         regels.add("");
         regels.add("spool " + this.versie + "_setup.lst");
