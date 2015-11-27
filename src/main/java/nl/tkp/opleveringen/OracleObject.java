@@ -12,6 +12,7 @@ public class OracleObject implements Serializable {
     private String fileType;
     private String folderName;
     private int sequenceNumber;
+    private String dbEquivalent;
     private String filePrefix;
     private boolean inSetup;
 
@@ -20,6 +21,7 @@ public class OracleObject implements Serializable {
         this.fileType = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
         this.folderName = "";
         this.sequenceNumber = 999;
+        this.dbEquivalent = "";
         this.filePrefix = "Ja";
         this.inSetup = false;
     }
@@ -56,6 +58,14 @@ public class OracleObject implements Serializable {
         this.sequenceNumber = sequenceNumber;
     }
 
+    public String getDbEquivalent() {
+        return this.dbEquivalent;
+    }
+
+    public void setDbEquivalent(String dbEquivalent) {
+        this.dbEquivalent = dbEquivalent;
+    }
+
     public String getFilePrefix() {
         return this.filePrefix;
     }
@@ -73,7 +83,7 @@ public class OracleObject implements Serializable {
     }
 
     public String toString() {
-        return "OracleObject(fileName=" + this.fileName + ", fileType=" + this.fileType + ", folderName=" + this.folderName + ", sequenceNumber=" + this.sequenceNumber + ")";
+        return "OracleObject(fileName=" + this.fileName + ", fileType=" + this.fileType + ", folderName=" + this.folderName + ", sequenceNumber=" + this.sequenceNumber + ", dbEquivalent=" + this.dbEquivalent + ")";
     }
 
     public String getNewFileName(String versie) {
