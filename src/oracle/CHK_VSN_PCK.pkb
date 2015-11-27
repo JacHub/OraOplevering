@@ -406,24 +406,27 @@ g_stack          varchar2(32767) := ';';
    begin
       if instr(g_stack, ';' || str_representation || ';') = 0 then
          g_stack := g_stack || str_representation || ';';
-         l_dependencies.extend(1);
 
-         declare
-         str_versie   varchar2(32767);
-         begin
-            select versie into str_versie
-            from chk_objectversies
-            where owner       = p_owner
-            and   object_name = p_name
-            and   object_type = p_type
-            and   ( ingangsdatum <= sysdate and ( einddatum > sysdate or einddatum is null ) );
+         if p_level > 0 then
+            l_dependencies.extend(1);
 
-            l_dependencies(l_dependencies.count) := str_representation || Chr(9) || str_versie;
+            declare
+            str_versie   varchar2(32767);
+            begin
+               select versie into str_versie
+               from chk_objectversies
+               where owner       = p_owner
+               and   object_name = p_name
+               and   object_type = p_type
+               and   ( ingangsdatum <= sysdate and ( einddatum > sysdate or einddatum is null ) );
 
-         exception
-            when NO_DATA_FOUND then
-               l_dependencies(l_dependencies.count) := str_representation;
-         end;
+               l_dependencies(l_dependencies.count) := str_representation || Chr(9) || str_versie;
+
+            exception
+               when NO_DATA_FOUND then
+                  l_dependencies(l_dependencies.count) := str_representation;
+            end;
+         end if;
 
          for x in ( select referenced_owner                                                    referenced_owner
                          , referenced_name                                                     referenced_name
@@ -432,7 +435,8 @@ g_stack          varchar2(32767) := ';';
                     where owner                                         = p_owner
                     and   name                                          = p_name
                     and   decode(type, 'PACKAGE BODY', 'PACKAGE', type) = p_type
-                    and   referenced_owner != 'SYS' )
+                    and   referenced_type not in ( 'NON-EXISTENT' )
+                    and   referenced_owner not in ( 'SYS', 'SYSTEM', 'XDB' ) )
          loop
             l_objects(l_objects.count).referenced_owner := x.referenced_owner;
             l_objects(l_objects.last).referenced_name   := x.referenced_name;
@@ -442,7 +446,7 @@ g_stack          varchar2(32767) := ';';
          declare
          l_index   binary_integer := l_objects.first;
          begin
-            while l_index is not null loop
+            while l_index is not null and p_level < 1 loop
                recurs(l_objects(l_index).referenced_owner, l_objects(l_index).referenced_name, l_objects(l_index).referenced_type, p_level+1);
                l_index := l_objects.next(l_index);
             end loop;
