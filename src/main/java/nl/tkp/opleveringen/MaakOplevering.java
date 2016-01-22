@@ -62,7 +62,7 @@ public class MaakOplevering {
                     opl.saveOracleOplevering();
                     opl.createSetup();
                     opl.createVersiePre();
-//                    opl.createVersiePost();
+                    opl.createVersiePost();
                     opl.createReleasenotes();
                     opl.createConfig();
                     opl.createActionnotes();
