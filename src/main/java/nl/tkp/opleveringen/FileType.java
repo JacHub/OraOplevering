@@ -5,14 +5,16 @@ package nl.tkp.opleveringen;
  */
 public class FileType {
     public String name;
+    public String objectType;
     public int sequenceNumber;
     public String dbEquivalent;
     public String folderName;
     public String filePrefix;
     public boolean inSetup;
 
-    public FileType(String name, int sequenceNumber, String dbEquivalent, String folderName, String filePrefix, boolean inSetup) {
+    public FileType(String name, String objectType, int sequenceNumber, String dbEquivalent, String folderName, String filePrefix, boolean inSetup) {
         this.name = name;
+        this.objectType = objectType;
         this.sequenceNumber = sequenceNumber;
         this.dbEquivalent = dbEquivalent;
         this.folderName = folderName;
@@ -22,6 +24,7 @@ public class FileType {
 
     FileType(String name, int sequenceNumber) {
         this.name = name;
+        this.objectType = "";
         this.folderName = "";
         this.sequenceNumber = sequenceNumber;
         this.filePrefix = "Nee";
@@ -36,7 +39,7 @@ public class FileType {
     }
 
     public String toString() {
-        return "FileType(name=" + this.name + ", sequenceNumber=" + this.sequenceNumber + ", dbEquivalent=" + this.dbEquivalent + ", folderName=" + this.folderName
+        return "FileType(name=" + this.name + " objectType= "+ this.objectType +", sequenceNumber=" + this.sequenceNumber + ", dbEquivalent=" + this.dbEquivalent + ", folderName=" + this.folderName
                 + ", filePrefix=" + this.filePrefix + ", inSetup=" + this.inSetup + ")";
     }
 
