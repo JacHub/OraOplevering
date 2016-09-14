@@ -56,12 +56,12 @@ public class FileTypes {
         fileTypes.add(new FileType("ins",191 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("upd",192 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("fmb",200 ,""                 ,"fmb","Ja",false));
-        fileTypes.add(new FileType("fmx",210 ,""                 ,"fmx","Ja",false));
+        fileTypes.add(new FileType("fmx",210 ,""                 ,"fmxx-linux","Ja",false));
         fileTypes.add(new FileType("pll",240 ,""                 ,"pll","Ja",false));
-        fileTypes.add(new FileType("plx",250 ,""                 ,"plx","Ja",false));
+        fileTypes.add(new FileType("plx",250 ,""                 ,"plx-linux","Ja",false));
         fileTypes.add(new FileType("txt",260 ,""                 ,"plx","Ja",false));
         fileTypes.add(new FileType("mmb",270 ,""                 ,"mmb","Ja",false));
-        fileTypes.add(new FileType("mmx",280 ,""                 ,"mmx","Ja",false));
+        fileTypes.add(new FileType("mmx",280 ,""                 ,"mmx-linux","Ja",false));
         fileTypes.add(new FileType("rdf",270 ,""                 ,"rdf","Ja",false));
 
         this.fileTypes = fileTypes;

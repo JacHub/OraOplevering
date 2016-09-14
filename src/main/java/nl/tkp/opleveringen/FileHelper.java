@@ -81,6 +81,20 @@ public final class FileHelper {
         }
     }
 
+    public static void copyFile(String from, String to) {
+        try {
+            File fromFile = new File(from);
+            File toFile = new File(to);
+            if (toFile.exists()) {
+                System.out.println("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
+                toFile.delete();
+            }
+            Files.copy(fromFile.toPath(), toFile.toPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteFile(String filename) {
         try {
             File file = new File(filename);
