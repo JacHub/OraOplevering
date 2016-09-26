@@ -73,7 +73,7 @@ public class MaakOplevering {
         }
     }
 
-    private static void verplaatsBestanden(String folderName, OracleOplevering opl) {
+    public static void verplaatsBestanden(String folderName, OracleOplevering opl) {
         String naarFolder = folderName + "\\ddl\\"; // map ddl altijd aanmaken!
         FileHelper.createFolder(naarFolder);
         for (OracleObject o : opl.oracleObjecten) {
@@ -88,7 +88,7 @@ public class MaakOplevering {
         }
     }
 
-    private static void opleveringUitbreiden(OracleOplevering opl) {
+    public static void opleveringUitbreiden(OracleOplevering opl) {
         // evt. toevoegen al eerder opgeleverde objecten
         ArrayList<OracleObject> vorigeOracleObjectenInOplevering = opl.loadOracleOplevering();
         if (vorigeOracleObjectenInOplevering != null) {

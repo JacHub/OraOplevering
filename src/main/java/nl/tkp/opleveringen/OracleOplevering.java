@@ -36,8 +36,8 @@ public class OracleOplevering {
         this.versie = getVersionName(fl);
         jiraCall = new SearchLabelsCallThread(this.versie); // 28-04-2015 Lveekhout: zo snel al het kan jira REST call afvuren.
         this.folder = foldername;
-        FileTypes fts = new FileTypes(configFolderName);
-//        FileTypes fts = new FileTypes();
+//        FileTypes fts = new FileTypes(configFolderName);
+        FileTypes fts = new FileTypes();
         if (fts == null) {
             throw new ConfigFileNotExistsException("Configuratie bestand filetypes.json niet gevonden in de map " + foldername);
         }

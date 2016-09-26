@@ -36,14 +36,14 @@ public class FileTypes {
         fileTypes.add(new FileType("usr","Users",10  ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("rle","Roles",20  ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("seq","Sequences",30  ,"SEQUENCE"         ,"ddl","Ja",true ));
-        fileTypes.add(new FileType("sqs","Sequences",31  ,"SEQUENCE"         ,"ddl","Ja",true ));
-        fileTypes.add(new FileType("tps","",40  ,""                 ,"ddl","Ja",true ));
+//        fileTypes.add(new FileType("sqs","Sequences",31  ,"SEQUENCE"         ,"ddl","Ja",true ));
+        fileTypes.add(new FileType("tps","xxx",40  ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("tab","Tables",50  ,"TABLE"            ,"ddl","Ja",true ));
         fileTypes.add(new FileType("aqt","QueueTables",60  ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("aqq","Queues",70  ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("fnc","Functions",80  ,"FUNCTION"         ,"ddl","Ja",true ));
         fileTypes.add(new FileType("syn","Synonyms",90  ,"SYNONYM"          ,"ddl","Ja",true ));
-        fileTypes.add(new FileType("snp","MaterializedView",100 ,""                 ,"ddl","Ja",true ));
+//        fileTypes.add(new FileType("snp","MaterializedView",100 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("mv" ,"MaterializedView",110 ,"MATERIALIZED VIEW","ddl","Ja",true ));
         fileTypes.add(new FileType("vw" ,"View",120 ,"VIEW"             ,"ddl","Ja",true ));
         fileTypes.add(new FileType("prc","Procedures",130 ,"PROCEDURE"        ,"ddl","Ja",true ));
