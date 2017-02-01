@@ -279,22 +279,22 @@ public class OracleOplevering {
         Set<String> uniekObjects = new HashSet<>();
         regels.add("insert into gen_versies( deelapplicatie, versienummer) values ('" + getApplicatieId() + "','" + getVersieNummer() + "');");
         regels.add("");
-//        for (OracleObject oracleObject : this.oracleObjecten) {
-//            if (oracleObject.getDbEquivalent()!=null&&oracleObject.getDbEquivalent().length()>0) {
-//                String upperObjectName = oracleObject.getObjectName(this.versie).toUpperCase();
-//                if (!uniekObjects.contains(upperObjectName)) {
-//                    uniekObjects.add(upperObjectName);
-//                    regels.add("begin execute immediate 'insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype, aanmaakdatum) values (''"
-//                            + getApplicatieId() + "'', ''"
-//                            + getVersieNummer() + "'', ''"
-//                            + oracleObject.getObjectName(this.versie).toUpperCase() + "'', ''"
-//                            + oracleObject.getDbEquivalent() + "'', "
-//                            + "sysdate" + ")'; exception when others then null; end;");
-//                    regels.add("/");
-//                }
-//            }
-//        }
-//        regels.add("");
+        for (OracleObject oracleObject : this.oracleObjecten) {
+            if (oracleObject.getDbEquivalent()!=null&&oracleObject.getDbEquivalent().length()>0) {
+                String upperObjectName = oracleObject.getObjectName(this.versie).toUpperCase();
+                if (!uniekObjects.contains(upperObjectName)) {
+                    uniekObjects.add(upperObjectName);
+                    regels.add("begin execute immediate 'insert into gen_object_versies (deelapplicatie, versienummer, objectnaam, objecttype, aanmaakdatum) values (''"
+                            + getApplicatieId() + "'', ''"
+                            + getVersieNummer() + "'', ''"
+                            + oracleObject.getObjectName(this.versie).toUpperCase() + "'', ''"
+                            + oracleObject.getDbEquivalent() + "'', "
+                            + "sysdate" + ")'; exception when others then null; end;");
+                    regels.add("/");
+                }
+            }
+        }
+        regels.add("");
         regels.add("commit;");
         regels.add("");
         FileHelper.generateFile(this.folder + "\\ddl\\" + this.versie + "_ins_versie.sql", regels);
