@@ -1,5 +1,7 @@
 package nl.tkp.opleveringen;
 
+import org.slf4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,27 +11,29 @@ import java.util.List;
  * Created by Jacob on 12-11-2014.
  */
 public class MaakOplevering {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MaakOplevering.class);
+
     public static void main(String[] args) throws Exception {
-        System.out.println("***********************************************************************************************************************************");
-        System.out.println("Maak een map met als naam de versie van de oplevering. bv ARS_1.02.003 of ARS_1.02.003_hf1 (let op er mogen geen spaties in staan!)");
-        System.out.println("Zet in deze map de bestanden met of zonder de versie prefix.");
-        System.out.println("Maak per object een bestand met de naam van het object en gebruik hierbij de bekende filetypes zoals tab, fnc en pks enz.");
-        System.out.println("");
-        System.out.println("Als er al een oplevering gegenereerd is kan er een nieuw object toegevoegd worden door dit in de root map te plaatsen en");
-        System.out.println("opnieuw een oplevering te genereren.");
-        System.out.println("Bestaat het object al dan wordt dit overschreven.");
-        System.out.println("De oplevering wordt in zijn geheel opnieuw gegenereerd en achteraf gemaakte wijzigingen in b.v. de setup.sql worden overschreven.");
-        System.out.println("***********************************************************************************************************************************");
-        System.out.println("");
+        LOGGER.info("***********************************************************************************************************************************");
+        LOGGER.info("Maak een map met als naam de versie van de oplevering. bv ARS_1.02.003 of ARS_1.02.003_hf1 (let op er mogen geen spaties in staan!)");
+        LOGGER.info("Zet in deze map de bestanden met of zonder de versie prefix.");
+        LOGGER.info("Maak per object een bestand met de naam van het object en gebruik hierbij de bekende filetypes zoals tab, fnc en pks enz.");
+        LOGGER.info("");
+        LOGGER.info("Als er al een oplevering gegenereerd is kan er een nieuw object toegevoegd worden door dit in de root map te plaatsen en");
+        LOGGER.info("opnieuw een oplevering te genereren.");
+        LOGGER.info("Bestaat het object al dan wordt dit overschreven.");
+        LOGGER.info("De oplevering wordt in zijn geheel opnieuw gegenereerd en achteraf gemaakte wijzigingen in b.v. de setup.sql worden overschreven.");
+        LOGGER.info("***********************************************************************************************************************************");
+        LOGGER.info("");
 
         if (args.length != 2) {
-            System.out.println("MaakOplevering " + args.length);
-            System.out.println("FOUT!!");
-            System.out.println("");
-            System.out.println("Om een oplevering aan te maken zijn er twee argumenten nodig!");
-            System.out.println("De map waar het configuratie bestand filetyps.json staat en een map waar de oplevering staat");
-            System.out.println("Bijvoorbeeld:");
-            System.out.println("MaakOplevering g:\\werk\\config g:\\werk\\IBRRFE_1.02.003");
+            LOGGER.error("MaakOplevering " + args.length);
+            LOGGER.error("FOUT!!");
+            LOGGER.error("");
+            LOGGER.error("Om een oplevering aan te maken zijn er twee argumenten nodig!");
+            LOGGER.error("De map waar het configuratie bestand filetyps.json staat en een map waar de oplevering staat");
+            LOGGER.error("Bijvoorbeeld:");
+            LOGGER.error("MaakOplevering g:\\werk\\config g:\\werk\\IBRRFE_1.02.003");
         } else {
             String configFolderName = "";
             String folderName = "";
@@ -45,9 +49,9 @@ public class MaakOplevering {
                 FileHelper.removeFilePrefixes(folderName);
 
                 List<File> fl = FileHelper.readFolder(folderName);
-                System.out.println("Huidige werkmap: " + folderName);
+                LOGGER.info("Huidige werkmap: " + folderName);
                 if (fl.size() == 0) {
-                    System.out.println("Geen bestanden in '" + folderName + "' aanwezig om een oplevering van te maken!");
+                    LOGGER.error("Geen bestanden in '" + folderName + "' aanwezig om een oplevering van te maken!");
                 } else {
                     OracleOplevering opl = new OracleOplevering(fl, folderName, configFolderName);
 
@@ -65,10 +69,10 @@ public class MaakOplevering {
                     opl.createConfig();
                     opl.createActionnotes();
                     //                    FileHelper.zip(folderName);
-                    System.out.println("De oplevering is aangemaakt!");
+                    LOGGER.info("De oplevering is aangemaakt!");
                 }
             } else {
-                System.out.println("De opgegeven map '" + folderName + "' bestaat niet of de naam voldoet niet aan de conventie van een versienummer. (XXXXXXX_9.99.999)");
+                LOGGER.error("De opgegeven map '" + folderName + "' bestaat niet of de naam voldoet niet aan de conventie van een versienummer. (XXXXXXX_9.99.999)");
             }
         }
     }
@@ -94,7 +98,7 @@ public class MaakOplevering {
         if (vorigeOracleObjectenInOplevering != null) {
             for (OracleObject vorigObject : vorigeOracleObjectenInOplevering) {
                 opl.addOracleObject(vorigObject);
-                System.out.println("Oplevering wordt uitgebreid met nieuwe objecten.");
+                LOGGER.info("Oplevering wordt uitgebreid met nieuwe objecten.");
             }
         }
     }

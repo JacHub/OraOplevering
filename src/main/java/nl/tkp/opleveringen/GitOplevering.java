@@ -1,5 +1,7 @@
 package nl.tkp.opleveringen;
 
+import org.slf4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -17,40 +19,41 @@ import static nl.tkp.opleveringen.MaakOplevering.verplaatsBestanden;
  * @author <a href="mailto:huizenga.j@tkppensioen.nl">Jacob Huizenga</a>
  */
 public class GitOplevering {
-    public static void main(String[] args) throws Exception {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(GitOplevering.class);
+        public static void main(String[] args) throws Exception {
 
-
+        LOGGER.info("Start maken oplevering.");
         if (args.length != 3) {
-            System.out.println("GitOplevering onvoldoende argumenten aantal is " + args.length);
-            System.out.println("FOUT!!");
-            System.out.println("");
-            System.out.println("Om een oplevering aan te maken zijn er drie argumenten nodig:");
-            System.out.println("  De root map waar de database sources van de applicatie staan.");
-            System.out.println("  De versie van de applicatie.");
-            System.out.println("  De map waar de oplevering aangemaakt moet worden.");
-            System.out.println("Bijvoorbeeld:");
-            System.out.println("  GitOplevering g:\\werk\\CAE CAE_1.01.001 g:\\werk\\oplevermap");
+            LOGGER.error ("GitOplevering onvoldoende argumenten aantal is " + args.length);
+            LOGGER.error("FOUT!!");
+            LOGGER.error("");
+            LOGGER.error("Om een oplevering aan te maken zijn er drie argumenten nodig:");
+            LOGGER.error("  De root map waar de database sources van de applicatie staan.");
+            LOGGER.error("  De versie van de applicatie.");
+            LOGGER.error("  De map waar de oplevering aangemaakt moet worden.");
+            LOGGER.error("Bijvoorbeeld:");
+            LOGGER.error("  GitOplevering g:\\werk\\CAE CAE_1.01.001 g:\\werk\\oplevermap");
         } else {
 
             String folderGitProject = args[0]; //"D:\\dev\\oracletest";
-            String versie = args[1]; // "CAE_1.01.111";
+            String applicatieVersie = args[1]; // "CAE_1.01.111";
             String folderOplevering = args[2]; //"d:\\temp\\" + versie;
-            folderOplevering = folderOplevering +"\\"+ versie;
+            folderOplevering = folderOplevering +"\\"+ applicatieVersie;
 
             Set<String> gewijzigdeFiles = bepaalGewijzigdeBestanden();
 
             if (gewijzigdeFiles.size() > 0 && !FileHelper.folderExists(folderOplevering)) {
                 FileHelper.createFolder(folderOplevering);
-                System.out.println("map " + folderOplevering + " aangemaakt");
+                System.out.println("folder " + folderOplevering + " aangemaakt");
             }
             kopieerGewijzigdeBestandenNaarOpleverMap(folderGitProject, folderOplevering, gewijzigdeFiles);
 
             FileHelper.removeFilePrefixes(folderOplevering);
 
             List<File> fl = FileHelper.readFolder(folderOplevering);
-            System.out.println("Huidige werkmap: " + folderOplevering);
+            LOGGER.info("Huidige werkmap: " + folderOplevering);
             if (fl.size() == 0) {
-                System.out.println("Geen bestanden in '" + folderOplevering + "' aanwezig om een oplevering van te maken!");
+                LOGGER.error("Geen bestanden in '" + folderOplevering + "' aanwezig om een oplevering van te maken!");
             } else {
                 OracleOplevering opl = new OracleOplevering(fl, folderOplevering, null);
 
@@ -68,7 +71,7 @@ public class GitOplevering {
                 opl.createConfig();
                 opl.createActionnotes();
                 //                    FileHelper.zip(folderName);
-                System.out.println("De oplevering is aangemaakt!");
+                LOGGER.info("De oplevering is aangemaakt!");
 
             }
         }
@@ -77,35 +80,34 @@ public class GitOplevering {
     private static void kopieerGewijzigdeBestandenNaarOpleverMap(String folderGitProject, String folderOplevering, Set<String> gewijzigdeFiles) {
         for (String filenaam : gewijzigdeFiles) {
             String objectNaam = bepaalBestandsnaam(filenaam);
-            System.out.println("copy file van " + folderGitProject + "\\" + filenaam + " naar " + folderOplevering + "\\" + objectNaam);
+            LOGGER.info("copy file van " + folderGitProject + "\\" + filenaam + " naar " + folderOplevering + "\\" + objectNaam);
             FileHelper.copyFile(folderGitProject + "\\" + filenaam, folderOplevering + "\\" + objectNaam);
         }
     }
 
     private static String bepaalBestandsnaam(String filenaam) {
-        String[] output = filenaam.split("/");
-        String objectNaam = output[output.length - 1];
-        String objectType = output[output.length - 2];
-        String oudeFileType = objectNaam.substring(objectNaam.lastIndexOf("."));
-        String nieuweFileType = bepaalFileType(filenaam);
+        String[] bestandsnaamMetPath = filenaam.split("/");
+        String objectnaam = bestandsnaamMetPath[bestandsnaamMetPath.length - 1];
+        String objectType = bestandsnaamMetPath[bestandsnaamMetPath.length - 2];
+        String oudeFileType = objectnaam.substring(objectnaam.lastIndexOf("."));
+        String nieuweFileType = bepaalFileType(objectType);
         if (nieuweFileType == null) {
             nieuweFileType = oudeFileType;
         }
-        objectNaam = objectNaam.replace(oudeFileType, "." + nieuweFileType);
-        return objectNaam;
+        objectnaam = objectnaam.replace(oudeFileType, "." + nieuweFileType);
+        return objectnaam;
     }
 
-    private static String bepaalFileType(String bestandsNaam) {
-        // bepaal filetype
-        System.out.println("bestandsnaam to type " + bestandsNaam);
+    private static String bepaalFileType(String bestandsnaam) {
+        // bepaal nieuwe filetype
         FileTypes fileTypes = new FileTypes();
         List<FileType> fileTypeList = fileTypes.getFileTypes();
         FileType fileType = fileTypeList.stream()
-                .filter(f -> bestandsNaam.contains(f.objectType))
+                .filter(f -> bestandsnaam.contains(f.objectType))
                 .findAny()
                 .orElse(null);
 
-        System.out.println("filetype " + fileType);
+        LOGGER.info("bestandsnaam to type bestandsnaam: " + bestandsnaam+ " filetype: " + fileType);
         return fileType.name;
     }
 
@@ -130,7 +132,6 @@ public class GitOplevering {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        System.out.println("Finished");
         return null;
     }
 }

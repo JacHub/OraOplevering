@@ -20,32 +20,32 @@
     <build>
         <plugins>
 
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>3.2.1</version>
-                <configuration>
-                    <url>jdbc:oracle:thin:@//devdbs01:1521/PPSDEV</url>
-                    <user>HUIZENGAJ</user>
-                    <password>jacob</password>
-                    <locations>
-                        <location>filesystem:/src/main/sql</location>
-                    </locations>
-                    <schemas>
-                        <schema>HUIZENGAJ</schema>
-                    </schemas>
-                    <placeholders>
-                        <versie>${version}</versie>
-                    </placeholders>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.oracle</groupId>
-                        <artifactId>ojdbc7</artifactId>
-                        <version>${ojdbc7.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.flywaydb</groupId>-->
+                <!--<artifactId>flyway-maven-plugin</artifactId>-->
+                <!--<version>3.2.1</version>-->
+                <!--<configuration>-->
+                    <!--<url>jdbc:oracle:thin:@//devdbs01:1521/PPSDEV</url>-->
+                    <!--<user>HUIZENGAJ</user>-->
+                    <!--<password>jacob</password>-->
+                    <!--<locations>-->
+                        <!--<location>filesystem:/src/main/sql</location>-->
+                    <!--</locations>-->
+                    <!--<schemas>-->
+                        <!--<schema>HUIZENGAJ</schema>-->
+                    <!--</schemas>-->
+                    <!--<placeholders>-->
+                        <!--<versie>${version}</versie>-->
+                    <!--</placeholders>-->
+                <!--</configuration>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>com.oracle</groupId>-->
+                        <!--<artifactId>ojdbc7</artifactId>-->
+                        <!--<version>${ojdbc7.version}</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -126,6 +126,14 @@
             <artifactId>ojdbc</artifactId>
             <version>14</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
+
     </dependencies>
 
     <dependencyManagement>

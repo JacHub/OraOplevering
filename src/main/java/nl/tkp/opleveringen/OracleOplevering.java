@@ -2,6 +2,7 @@ package nl.tkp.opleveringen;
 
 import nl.tkp.opleveringen.threads.SearchLabelsCallThread;
 import oracle.jdbc.OracleTypes;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.sql.*;
@@ -13,6 +14,7 @@ import java.util.Date;
  * Created by Jacob on 12-11-2014.
  */
 public class OracleOplevering {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OracleOplevering.class);
 
     public String versie;
     public String folder;
@@ -26,11 +28,11 @@ public class OracleOplevering {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection("jdbc:oracle:thin:@devdbs01:1521:ppsdev", "alg", "alg");
-            System.out.println("[INFO] Oracle connectie met ALG@PPSDEV!");
+            LOGGER.info("[INFO] Oracle connectie met ALG@PPSDEV!");
         } catch (ClassNotFoundException e) {
-            System.out.println("[WARNING] Geen Oracle JDBC driver gevonden: [" + e.getMessage() + "]");
+            LOGGER.error("[WARNING] Geen Oracle JDBC driver gevonden: [" + e.getMessage() + "]");
         } catch (SQLException se) {
-            System.out.println("[WARNING] Kan geen Oracle connection maken: [" + se.getMessage() + "]");
+            LOGGER.error("[WARNING] Kan geen Oracle connection maken: [" + se.getMessage() + "]");
         }
 
         this.versie = getVersionName(fl);
@@ -52,7 +54,7 @@ public class OracleOplevering {
         /**
          * Voeg een nieuw object toe aan de oplevering
          */
-        //System.out.println("addOracleObject this file type "+oo.getFileType());
+        //LOGGER.info("addOracleObject this file type "+oo.getFileType());
         int i = this.fileTypes.indexOf(new FileType(oo.getFileType(), 0));
         if (i >= 0) {
             oo.setFolderName(this.fileTypes.get(i).folderName);
@@ -64,9 +66,9 @@ public class OracleOplevering {
                 this.oracleObjecten.add(oo);
             }
         } else {
-            System.out.println("********************************************************************************************");
-            System.out.println("FileType '" + oo.getFileType() + "' NIET gevonden! Het bestand blijft in de huidige map staan.");
-            System.out.println("********************************************************************************************");
+            LOGGER.info("********************************************************************************************");
+            LOGGER.info("FileType '" + oo.getFileType() + "' NIET gevonden! Het bestand blijft in de huidige map staan.");
+            LOGGER.info("********************************************************************************************");
             oo.setFolderName("");
             oo.setSequenceNumber(999);
             oo.setFilePrefix("Nee");
@@ -160,7 +162,7 @@ public class OracleOplevering {
     }
 
     private void haalDependencies(List<String> regels, String upperObjectName, String oracleType) {
-            System.out.println("[INFO] Ophalen dependencies database object: [" + upperObjectName + "][" + oracleType + "]");
+            LOGGER.info("Ophalen dependencies database object: [" + upperObjectName + "][" + oracleType + "]");
             try (CallableStatement stmt = connection.prepareCall("{? = call chk_vsn_pck.dependencies_unknown_owner(?,?)}")) {
                 stmt.registerOutParameter(1, OracleTypes.CURSOR);
                 stmt.setString(2, upperObjectName);
@@ -264,7 +266,7 @@ public class OracleOplevering {
                     regels.add("/");
                 }
             } catch (SQLException e) {
-                System.out.println("Error bij uitvoeren query: [" + e.getMessage() + "]");
+                LOGGER.info("Error bij uitvoeren query: [" + e.getMessage() + "]");
                 e.printStackTrace();
                 return;
             }
@@ -418,9 +420,9 @@ public class OracleOplevering {
             out.writeObject(this.oracleObjecten);
             out.close();
             fileOut.close();
-            System.out.println("Serialized data is opgeslagen in " + this.folder + "/oracleObjecten.ser");
+            LOGGER.info("Serialized data is opgeslagen in " + this.folder + "/oracleObjecten.ser");
         } catch (IOException i) {
-            System.out.println("Oplevering kan niet opgeslagen worden!");
+            LOGGER.info("Oplevering kan niet opgeslagen worden!");
             i.printStackTrace();
         }
     }
@@ -434,10 +436,10 @@ public class OracleOplevering {
             fileIn.close();
             return oracleObjecten;
         } catch (IOException i) {
-            System.out.println("Bestand oracleObjecten.ser niet gevonden, waarschijnlijk gaat het hier om een nieuwe oplevering!");
+            LOGGER.info("Bestand oracleObjecten.ser niet gevonden, waarschijnlijk gaat het hier om een nieuwe oplevering!");
             return null;
         } catch (ClassNotFoundException c) {
-            System.out.println("oracleObjecten.ser gevonden welke niet gedeserialized kan worden naar de class OracleObject.");
+            LOGGER.info("oracleObjecten.ser gevonden welke niet gedeserialized kan worden naar de class OracleObject.");
             c.printStackTrace();
             throw new RuntimeException("oracleObjecten.ser gevonden welke niet gedeserialized kan worden naar de class OracleObject. Verwijder dit bestand en verplaats alle bestanden weer naar de oplevermap en genereer de oplevering opnieuw!");
         }

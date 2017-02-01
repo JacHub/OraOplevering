@@ -1,6 +1,7 @@
 package nl.tkp.opleveringen;
 
 import com.cedarsoftware.util.io.JsonReader;
+import org.slf4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -11,18 +12,19 @@ import java.util.List;
  * Created by Jacob on 12-11-2014.
  */
 public class FileTypes {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FileTypes.class);
     ArrayList<FileType> fileTypes;
 
     FileTypes(String configFolderName) {
         try {
-            System.out.println("Laden filetypes (" + configFolderName + "\\filetypes.json).");
+            LOGGER.info("Laden filetypes (" + configFolderName + "\\filetypes.json).");
             // read in the object
             InputStream inputStream = new FileInputStream(configFolderName + "\\filetypes.json");
             JsonReader jr = new JsonReader(inputStream);
 
             this.fileTypes = (ArrayList<FileType>) jr.readObject();
 
-            System.out.println("Er zijn " + +this.fileTypes.size() + " filetypes geladen.");
+            LOGGER.info("Er zijn " + +this.fileTypes.size() + " filetypes geladen.");
             jr.close();
 
         } catch (Exception ex) {

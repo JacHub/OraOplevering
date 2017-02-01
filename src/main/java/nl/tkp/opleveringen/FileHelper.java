@@ -1,5 +1,7 @@
 package nl.tkp.opleveringen;
 
+import org.slf4j.Logger;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -15,6 +17,7 @@ import java.util.zip.ZipOutputStream;
  * Created by Jacob on 12-11-2014.
  */
 public final class FileHelper {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FileHelper.class);
 
     public static List<File> readFolder(String folderName) {
         File folder = new File(folderName);
@@ -59,7 +62,7 @@ public final class FileHelper {
                 //handle it
             }
             if (!result) {
-                System.out.println("DIR NOT created");
+                LOGGER.info("Map niet aangemaakt");
             }
         }
     }
@@ -69,11 +72,11 @@ public final class FileHelper {
             File fromFile = new File(from);
             File toFile = new File(to);
             if (toFile.exists()) {
-                System.out.println("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
+                LOGGER.info("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
                 toFile.delete();
             }
             if (!fromFile.renameTo(new File(to))) {
-                System.out.println("Het verplaatsen van het bestand " + from + " naar " + to + " is fout gegaan!");
+                LOGGER.info("Het verplaatsen van het bestand " + from + " naar " + to + " is fout gegaan!");
             }
 
         } catch (Exception e) {
@@ -86,7 +89,7 @@ public final class FileHelper {
             File fromFile = new File(from);
             File toFile = new File(to);
             if (toFile.exists()) {
-                System.out.println("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
+                LOGGER.info("Bestand '" + fromFile.getName() + "' bestaat al en wordt overschreven!");
                 toFile.delete();
             }
             Files.copy(fromFile.toPath(), toFile.toPath());
@@ -99,7 +102,7 @@ public final class FileHelper {
         try {
             File file = new File(filename);
             if (file.exists()) {
-                System.out.println("Bestand '" + file.getName() + "' bestaat en wordt verwijderd!");
+                LOGGER.info("Bestand '" + file.getName() + "' bestaat en wordt verwijderd!");
                 file.delete();
             }
 
@@ -129,7 +132,7 @@ public final class FileHelper {
         String filename = "";
         String newFilename = "";
         String versie = getCurrentFolderName(folderName);
-        System.out.println("Verwijderen evt versie prefix van de bestanden in de oplevermap " + folderName);
+        LOGGER.info("Verwijderen evt versie prefix van de bestanden in de oplevermap " + folderName);
         for (File file : fl) {
             // trim evt al aanwezige versienummer
             int positieVersieNummer = file.getName().indexOf(versie);
@@ -141,7 +144,7 @@ public final class FileHelper {
                     try {
                         File afile = new File(folderName + "\\" + filename);
                         if (!afile.renameTo(new File(folderName + "\\" + newFilename))) {
-                            System.out.println("Het hernoemen van het bestand " + filename + " naar " + newFilename + " is fout gegaan!");
+                            LOGGER.info("Het hernoemen van het bestand " + filename + " naar " + newFilename + " is fout gegaan!");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -178,7 +181,7 @@ public final class FileHelper {
 
             file.createNewFile();
             appendFile = false;
-            System.out.println("Aanmaken  : " + filename);
+            LOGGER.info("Aanmaken  : " + filename);
             fw = new FileWriter(file, appendFile);
 
             for (String regel : regels) {
@@ -193,11 +196,11 @@ public final class FileHelper {
 
     public static void zip(String teZippenFolder) {
         try {
-            System.out.println("te zippen foldernaam is " + teZippenFolder + " naar " + getPeviousFolderName(teZippenFolder));
+            LOGGER.info("te zippen foldernaam is " + teZippenFolder + " naar " + getPeviousFolderName(teZippenFolder));
 
             zip(teZippenFolder);
         } catch (Exception se) {
-            System.out.println("Wegens fouten is de oplevering niet gezipt: " + se.getStackTrace());
+            LOGGER.error("Wegens fouten is de oplevering niet gezipt: " + se.getStackTrace());
         }
 
     }
@@ -208,11 +211,11 @@ public final class FileHelper {
         File directoryToZip = new File(teZippenFolder);
 
         List<File> fileList = new ArrayList<File>();
-        System.out.println("---Getting references to all files in: " + directoryToZip.getCanonicalPath());
+        LOGGER.info("Ophalen bestanden uit de folder: " + directoryToZip.getCanonicalPath());
         getAllFiles(directoryToZip, fileList);
-        System.out.println("---Creating zip file");
+        LOGGER.info("Aanmaken zip file");
         writeZipFile(directoryToZip, fileList);
-        System.out.println("---Done");
+        LOGGER.info("Klaar");
     }
 
     public static void getAllFiles(File dir, List<File> fileList) {
@@ -221,10 +224,10 @@ public final class FileHelper {
             for (File file : files) {
                 fileList.add(file);
                 if (file.isDirectory()) {
-                    System.out.println("directory:" + file.getCanonicalPath());
+                    LOGGER.info("Folder:" + file.getCanonicalPath());
                     getAllFiles(file, fileList);
                 } else {
-                    System.out.println("     file:" + file.getCanonicalPath());
+                    LOGGER.info("     bestand:" + file.getCanonicalPath());
                 }
             }
         } catch (IOException e) {
@@ -235,7 +238,7 @@ public final class FileHelper {
     public static void writeZipFile(File directoryToZip, List<File> fileList) {
 
         try {
-            System.out.println("schrijf bestand naar " + getPeviousFolderName(directoryToZip.getName()) + directoryToZip.getName() + ".zip");
+            LOGGER.info("schrijf bestand naar " + getPeviousFolderName(directoryToZip.getName()) + directoryToZip.getName() + ".zip");
             FileOutputStream fos = new FileOutputStream(getPeviousFolderName(directoryToZip.getName()) + directoryToZip.getName() + ".zip");
             ZipOutputStream zos = new ZipOutputStream(fos);
 
@@ -262,7 +265,7 @@ public final class FileHelper {
         // to the directory being zipped, so chop off the rest of the path
         String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
                 file.getCanonicalPath().length());
-        System.out.println("Writing '" + zipFilePath + "' to zip file");
+        LOGGER.info("Schrijf '" + zipFilePath + "' naar zip file");
         ZipEntry zipEntry = new ZipEntry(zipFilePath);
         zos.putNextEntry(zipEntry);
 
