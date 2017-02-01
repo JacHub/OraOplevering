@@ -27,8 +27,8 @@ public class OracleOplevering {
     OracleOplevering(List<File> fl, String foldername, String configFolderName) throws ConfigFileNotExistsException, ConfigFileNotValidException {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@devdbs01:1521:ppsdev", "alg", "alg");
-            LOGGER.info("[INFO] Oracle connectie met ALG@PPSDEV!");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@pps-oradbs01.dev.tkp:1521:ppsdev", "alg", "alg");
+            System.out.println("[INFO] Oracle connectie met ALG@PPSDEV!");
         } catch (ClassNotFoundException e) {
             LOGGER.error("[WARNING] Geen Oracle JDBC driver gevonden: [" + e.getMessage() + "]");
         } catch (SQLException se) {
