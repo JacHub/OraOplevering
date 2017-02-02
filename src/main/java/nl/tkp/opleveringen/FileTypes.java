@@ -58,14 +58,14 @@ public class FileTypes {
         fileTypes.add(new FileType("grt","Grants",190 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("ins","Inserts",191 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("upd","Updates",192 ,""                 ,"ddl","Ja",true ));
-        fileTypes.add(new FileType("fmb","Fmb",200 ,""                 ,"fmb","Ja",false));
-        fileTypes.add(new FileType("fmx","Fmx",210 ,""                 ,"fmx-linux","Ja",false));
-        fileTypes.add(new FileType("pll","pll",240 ,""                 ,"pll","Ja",false));
-        fileTypes.add(new FileType("plx","plx",250 ,""                 ,"plx-linux","Ja",false));
-        fileTypes.add(new FileType("txt","txt",260 ,""                 ,"plx","Ja",false));
-        fileTypes.add(new FileType("mmb","mmb",270 ,""                 ,"mmb","Ja",false));
-        fileTypes.add(new FileType("mmx","mmx",280 ,""                 ,"mmx-linux","Ja",false));
-        fileTypes.add(new FileType("rdf","rdf",270 ,""                 ,"rdf","Ja",false));
+        fileTypes.add(new FileType("fmb","Fmb",200 ,""                 ,"fmb","Nee",false));
+        fileTypes.add(new FileType("fmx","Fmx",210 ,""                 ,"fmx-linux","Nee",false));
+        fileTypes.add(new FileType("pll","pll",240 ,""                 ,"pll","Nee",false));
+        fileTypes.add(new FileType("plx","plx",250 ,""                 ,"plx-linux","Nee",false));
+        fileTypes.add(new FileType("txt","txt",260 ,""                 ,"plx","Nee",false));
+        fileTypes.add(new FileType("mmb","mmb",270 ,""                 ,"mmb","Nee",false));
+        fileTypes.add(new FileType("mmx","mmx",280 ,""                 ,"mmx-linux","Nee",false));
+        fileTypes.add(new FileType("rdf","rdf",270 ,""                 ,"rdf","Nee",false));
 
         this.fileTypes = fileTypes;
     }
