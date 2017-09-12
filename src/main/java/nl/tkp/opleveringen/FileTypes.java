@@ -58,6 +58,7 @@ public class FileTypes {
         fileTypes.add(new FileType("grt","Grants",190 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("ins","Inserts",191 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("upd","Updates",192 ,""                 ,"ddl","Ja",true ));
+        fileTypes.add(new FileType("del","Updates",193 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("fmb","Fmb",200 ,""                 ,"fmb","Nee",false));
         fileTypes.add(new FileType("fmx","Fmx",210 ,""                 ,"fmx-linux","Nee",false));
         fileTypes.add(new FileType("pll","pll",240 ,""                 ,"pll","Nee",false));
