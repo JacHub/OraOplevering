@@ -44,7 +44,7 @@ public class JerseyClientJiraSearchLabelsCall {
         Client client = Client.create(getClientConfig());
         client.addFilter(basicAuth);
         ClientResponse clientResponse = client
-                .resource("http://jira/rest/api/latest/search?jql=labels=" + search + qString)
+                .resource("https://jira.intra.tkppensioen.nl/rest/api/latest/search?jql=labels=" + search + qString)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(ClientResponse.class);
 

@@ -9,6 +9,8 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Jacob on 12-11-2014.
@@ -392,25 +394,17 @@ public class OracleOplevering {
     }
 
     public String getApplicatieId() throws WrongVersionNameException {
-        int positieSeparator = this.versie.indexOf('_');
-        if (positieSeparator < 0) {
-            positieSeparator = this.versie.indexOf(' ');
-        }
-        if (positieSeparator < 0) {
-            throw new WrongVersionNameException("De naam van de map moet gelijk zijn aan de naam van de versie! Huidige naam bevat geen _ tussen applcatie en nummer.");
-        }
-        return this.versie.substring(0, positieSeparator);
+        Pattern p = Pattern.compile("^(.+)_(\\d\\.\\d{2}\\.\\d{3}.*)$");
+        Matcher m = p.matcher(this.versie);
+        if (m.matches()) return m.group(1);
+        else throw new WrongVersionNameException("Fout bij bepalen deelapplicatie. Geen match op pattern: ^(.+)_(\\d\\.\\d{2}\\.\\d{3}.*)$");
     }
 
     public String getVersieNummer() throws WrongVersionNameException {
-        int positieSeparator = this.versie.indexOf('_');
-        if (positieSeparator < 0) {
-            positieSeparator = this.versie.indexOf(' ');
-        }
-        if (positieSeparator < 0) {
-            throw new WrongVersionNameException("De naam van de map moet gelijk zijn aan de naam van de versie! Huidige naam bevat geen _ tussen applcatie en nummer.");
-        }
-        return this.versie.substring(positieSeparator + 1);
+        Pattern p = Pattern.compile("^(.+)_(\\d\\.\\d{2}\\.\\d{3}.*)$");
+        Matcher m = p.matcher(this.versie);
+        if (m.matches()) return m.group(2);
+        else throw new WrongVersionNameException("Fout bij bepalen versienummer. Geen match op pattern: ^(.+)_(\\d\\.\\d{2}\\.\\d{3}.*)$");
     }
 
     void saveOracleOplevering() {

@@ -35,7 +35,7 @@ public class JerseyClientJiraSearchAssigneeCall {
         }
 
         ClientResponse clientResponse = Client.create(getClientConfig())
-                .resource("http://jira/rest/api/latest/search?jql=assignee=" + search + qString)
+                .resource("https://jira.intra.tkppensioen.nl/rest/api/latest/search?jql=assignee=" + search + qString)
                 .header("Authorization", "Basic c2NydW1zY2hlcm06V2ludGVyMjAxNWE=")
                 .header("Connection", "Close")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
