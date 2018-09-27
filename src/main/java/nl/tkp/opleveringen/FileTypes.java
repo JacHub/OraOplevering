@@ -60,12 +60,12 @@ public class FileTypes {
         fileTypes.add(new FileType("upd","Updates",192 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("del","Updates",193 ,""                 ,"ddl","Ja",true ));
         fileTypes.add(new FileType("fmb","Fmb",200 ,""                 ,"fmb","Nee",false));
-        fileTypes.add(new FileType("fmx","Fmx",210 ,""                 ,"fmx-12","Nee",false));
+        fileTypes.add(new FileType("fmx","Fmx",210 ,""                 ,"fmx-f12","Nee",false));
         fileTypes.add(new FileType("pll","pll",240 ,""                 ,"pll","Nee",false));
-        fileTypes.add(new FileType("plx","plx",250 ,""                 ,"plx-12","Nee",false));
+        fileTypes.add(new FileType("plx","plx",250 ,""                 ,"plx-f12","Nee",false));
         fileTypes.add(new FileType("txt","txt",260 ,""                 ,"plx","Nee",false));
         fileTypes.add(new FileType("mmb","mmb",270 ,""                 ,"mmb","Nee",false));
-        fileTypes.add(new FileType("mmx","mmx",280 ,""                 ,"mmx-12","Nee",false));
+        fileTypes.add(new FileType("mmx","mmx",280 ,""                 ,"mmx-f12","Nee",false));
         fileTypes.add(new FileType("rdf","rdf",270 ,""                 ,"rdf","Nee",false));
 
         this.fileTypes = fileTypes;
